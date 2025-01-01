@@ -1,22 +1,49 @@
-const Seller = require("../models/Seller"); // Adjust path to your Seller model
-const User = require("../models/User"); // Adjust path to your User model
+const Seller = require("../models/Seller");
+const User = require("../models/User");
+const cloudinary = require('../configs/cloudinary');
+const fs = require('fs').promises; // Import fs.promises for async file operations
 
-// Register as a seller
 const registerSeller = async (req, res) => {
   try {
-    const { userId } = req.params; // Get user ID from the URL parameter
-    const { companyName, description, category, profile, location, contact } =
-      req.body;
+    // console.log("Received form data:", {
+    //   body: req.body,
+    //   file: req.file ? {
+    //     filename: req.file.filename,
+    //     path: req.file.path,
+    //     mimetype: req.file.mimetype
+    //   } : 'No file uploaded',
+    //   params: req.params
+    // });
+
+    const { userId } = req.params;
+    
+    // Parse stringified JSON fields with error handling
+    let coordinates, contact;
+    try {
+      coordinates = JSON.parse(req.body.coordinates);
+      contact = JSON.parse(req.body.contact);
+    } catch (error) {
+      return res.status(400).json({
+        message: "Invalid JSON format for coordinates or contact",
+        error: error.message
+      });
+    }
+    
+    const {
+      companyName,
+      description,
+      category,
+      location,
+    } = req.body;
 
     // Validate required fields
-    if (!companyName || !location || !location.coordinates) {
+    if (!companyName || !location || !coordinates || !coordinates.lat || !coordinates.lng) {
       return res.status(400).json({
-        message:
-          "Company name, address, and location coordinates are required.",
+        message: "Company name, location address, and location coordinates are required.",
       });
     }
 
-    // Find the user who wants to become a seller
+    // Check if the user exists
     const user = await User.findById(userId);
     if (!user) {
       return res.status(404).json({ message: "User not found." });
@@ -24,16 +51,50 @@ const registerSeller = async (req, res) => {
 
     // Check if the user is already a seller
     if (user.sellerDetails) {
-      return res.status(400).json({ message: "User is already a seller." });
+      return res.status(400).json({ message: "User is already registered as a seller." });
     }
 
-    // Create the new seller record
+    // Handle the profile image upload
+    let profileImageURL = '';
+    if (req.file) {
+      try {
+        // Upload image to Cloudinary
+        const result = await cloudinary.uploader.upload(req.file.path, {
+          folder: 'seller_images',
+          transformation: [{ width: 300, height: 300, crop: 'limit' }],
+        });
+        profileImageURL = result.secure_url;
+        
+        // Clean up the local file after successful upload to Cloudinary
+        try {
+          await fs.unlink(req.file.path);
+        } catch (unlinkError) {
+          console.error('Error deleting local file:', unlinkError);
+          // Continue execution even if file deletion fails
+        }
+      } catch (uploadError) {
+        console.error('Cloudinary upload error:', uploadError);
+        // Try to clean up the file even if upload failed
+        try {
+          await fs.unlink(req.file.path);
+        } catch (unlinkError) {
+          console.error('Error deleting local file:', unlinkError);
+        }
+        return res.status(500).json({
+          message: "Error uploading image",
+          error: uploadError.message
+        });
+      }
+    }
+
+    // Create a new seller record
     const newSeller = new Seller({
       companyName,
       description,
       category,
-      profile,
+      profileImage: profileImageURL,
       location,
+      coordinates,
       contact,
     });
 
@@ -49,14 +110,21 @@ const registerSeller = async (req, res) => {
       seller: savedSeller,
     });
   } catch (error) {
-    console.error(error);
+    console.error("Error while registering seller:", error);
+    // If there's a file and an error occurred, try to clean it up
+    if (req.file) {
+      try {
+        await fs.unlink(req.file.path);
+      } catch (unlinkError) {
+        console.error('Error deleting local file:', unlinkError);
+      }
+    }
     res.status(500).json({
       message: "Server error. Please try again later.",
       error: error.message,
     });
   }
 };
-
 const getAllSellers = async (req, res) => {
   try {
     // Find all users with a non-null sellerDetails field

@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
-const sellerSchema = new mongoose.Schema({
-   
+
+const sellerSchema = new mongoose.Schema(
+  {
     companyName: {
       type: String,
       required: true,
@@ -13,7 +14,9 @@ const sellerSchema = new mongoose.Schema({
     category: {
       type: String,
     },
-    profile:{type:String},
+    profileImage: { // Changed from 'profile' to 'profileImage'
+      type: String,
+    },
     location: {
       type: {
         type: String,
@@ -21,13 +24,15 @@ const sellerSchema = new mongoose.Schema({
         default: 'Point',
       },
       coordinates: {
-        type: [Number], 
+        type: [Number],
+       
       },
     },
     contact: {
       phone: String,
       instagram: String,
       whatsapp: String,
+      email: { type: String, trim: true },
       address: String,
     },
     posts: [
@@ -68,8 +73,10 @@ const sellerSchema = new mongoose.Schema({
       type: Date,
       default: Date.now,
     },
-  });
-  
-  sellerSchema.index({ location: '2dsphere' }); // For geospatial queries
-  module.exports = mongoose.model('Seller', sellerSchema);
-  
+  },
+  { timestamps: true } // Automatically adds createdAt and updatedAt fields
+);
+
+sellerSchema.index({ location: '2dsphere' }); // For geospatial queries
+
+module.exports = mongoose.model('Seller', sellerSchema);

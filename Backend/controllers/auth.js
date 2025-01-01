@@ -6,6 +6,7 @@ const User = require("../models/User"); // Adjust the path to your User model
 const register = async (req, res) => {
   try {
     const { name, email, password } = req.body;
+    console.log("login details from frond end", req.body);
 
     // Check for missing fields
     if (!name || !email || !password) {
@@ -92,7 +93,11 @@ const updateUserDetails = async (req, res) => {
   try {
     const { userId } = req.params;
     const { phone, address, coordinates } = req.body;
-
+    console.log("data for update ", phone, address, coordinates);
+    let updatedCoordinates = coordinates;
+    if (coordinates && coordinates.lat && coordinates.lng) {
+      updatedCoordinates = [coordinates.lng, coordinates.lat]; // Convert to [longitude, latitude]
+    }
     // Find the user
     const user = await User.findById(userId);
     if (!user) {
@@ -102,7 +107,7 @@ const updateUserDetails = async (req, res) => {
     // Update the provided fields
     if (phone) user.contact.phone = phone;
     if (address) user.contact.address = address;
-    if (coordinates) user.location.coordinates = coordinates;
+    if (coordinates) user.location.coordinates = updatedCoordinates;
 
     await user.save();
 
@@ -117,24 +122,34 @@ const updateUserDetails = async (req, res) => {
   }
 };
 const deleteUser = async (req, res) => {
-    try {
-      const { id } = req.params;  // Extract the seller ID from the URL parameter
-      
-      // Find and delete the seller by ID
-      const user = await User.findByIdAndDelete(id);
-      
-      if (!user) {
-        // If no seller is found with the provided ID, send a 404 error
-        return res.status(404).json({ message: 'User not found.' });
-      }
-      
-      // Send a success response after deletion
-      res.status(200).json({ message: 'User deleted successfully.' });
-      
-    } catch (error) {
-      // Handle any errors that occur
-      res.status(500).json({ message: 'Server error. Please try again later.', error: error.message });
-    }
-  };
+  try {
+    const { id } = req.params; // Extract the seller ID from the URL parameter
 
-module.exports = { register, login, getAllUsers, updateUserDetails ,deleteUser};
+    // Find and delete the seller by ID
+    const user = await User.findByIdAndDelete(id);
+
+    if (!user) {
+      // If no seller is found with the provided ID, send a 404 error
+      return res.status(404).json({ message: "User not found." });
+    }
+
+    // Send a success response after deletion
+    res.status(200).json({ message: "User deleted successfully." });
+  } catch (error) {
+    // Handle any errors that occur
+    res
+      .status(500)
+      .json({
+        message: "Server error. Please try again later.",
+        error: error.message,
+      });
+  }
+};
+
+module.exports = {
+  register,
+  login,
+  getAllUsers,
+  updateUserDetails,
+  deleteUser,
+};

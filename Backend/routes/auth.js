@@ -13,7 +13,7 @@ authRouter.post('/login', login);
 authRouter.get('/users', getAllUsers);
 
 // Update user details (partial updates for different stages)
-authRouter.patch('/users/:userId', updateUserDetails);
+authRouter.patch('/user/:userId', updateUserDetails);
 
 authRouter.delete('/:id', deleteUser);
 module.exports = authRouter;

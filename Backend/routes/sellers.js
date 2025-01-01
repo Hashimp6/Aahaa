@@ -8,9 +8,10 @@ const {
 } = require("../controllers/seller");
 
 const sellerRoutes = express.Router();
+const upload = require('../configs/multer');
 
-// Seller routes
-sellerRoutes.post("/register/:userId", registerSeller); // Register a new seller
+// Add multer middleware to handle multipart form data
+sellerRoutes.post('/register/:userId', upload.single('profileImage'), registerSeller);// Register a new seller
 sellerRoutes.get("/all", getAllSellers); // Get all sellers
 sellerRoutes.get('/seller/:userId', getSellerById); // Get a specific seller by ID
 sellerRoutes.patch('/:userId',updateSellerDetails); // Update a seller's details
