@@ -7,6 +7,7 @@ const addFavoriteSeller = async (req, res) => {
     const { userId, sellerId } = req.body;
 
     try {
+        console.log("reached");
         const user = await User.findById(userId);
         if (!user) return res.status(404).json({ message: 'User not found' });
 
