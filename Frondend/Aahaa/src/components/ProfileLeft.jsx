@@ -8,8 +8,12 @@ import {
   Settings, // Importing the settings icon
   AddPhotoAlternate, // Importing the add photo icon
 } from "@mui/icons-material";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 const LeftSideComponent = () => {
+  const navigate = useNavigate();
+  const sellerData = useSelector((state) => state.seller.sellerData);
   return (
     <div className="flex flex-col bg-white text-black p-5 h-screen ">
       {/* Profile Image */}
@@ -23,18 +27,16 @@ const LeftSideComponent = () => {
 
       {/* User Profile */}
       <div className="text-center mb-8">
-        <h1 className="text-2xl font-bold mb-2">John Doe</h1>
-        <p className="text-lg text-gray-600 mb-1">
-          Photographer & Content Creator
-        </p>
-        <p className="text-sm text-gray-500">Location: Los Angeles, CA</p>
+        <h1 className="text-2xl font-bold mb-2">{sellerData.companyName}</h1>
+        <p className="text-lg text-gray-600 mb-1">{sellerData.category}</p>
+        <p className="text-sm text-gray-500">{sellerData.description}</p>
       </div>
 
       {/* Links Section */}
       <div className="flex flex-col gap-4">
         {/* Instagram */}
         <a
-          href="https://instagram.com"
+          href={sellerData.contact.instagram}
           target="_blank"
           rel="noopener noreferrer"
           className="flex items-center justify-center gap-2 text-white px-4 py-2 rounded-md"
@@ -48,7 +50,7 @@ const LeftSideComponent = () => {
 
         {/* WhatsApp */}
         <a
-          href="https://wa.me/your-number"
+          href={sellerData.contact.whatsapp}
           target="_blank"
           rel="noopener noreferrer"
           className="flex items-center justify-center gap-2 text-white bg-green-500 px-4 py-2 rounded-md"
@@ -58,7 +60,7 @@ const LeftSideComponent = () => {
 
         {/* Call */}
         <a
-          href="tel:+1234567890"
+          href={sellerData.contact.phone}
           className="flex items-center justify-center gap-2 text-white bg-blue-600 px-4 py-2 rounded-md"
         >
           <Call /> Call
@@ -66,7 +68,7 @@ const LeftSideComponent = () => {
 
         {/* Email */}
         <a
-          href="mailto:example@example.com"
+          href={sellerData.contact.email}
           className="flex items-center justify-center gap-2 text-white bg-red-500 px-4 py-2 rounded-md"
         >
           <Email /> Email
@@ -75,12 +77,12 @@ const LeftSideComponent = () => {
 
       {/* Settings Button (Placed Below Contact Links) */}
       <div className="flex justify-between mt-6">
-        <button
+        <button  onClick={()=>{ navigate("/sellerForm")}}
           className="flex items-center justify-center gap-2 text-black bg-gray-200 p-4 rounded-full"
           aria-label="Settings"
         >
           <Settings className="text-black" />
-          <span className="text-sm">Settings</span>
+          <span className="text-sm">Edit Profile</span>
         </button>
         <button
           className="flex items-center justify-center gap-2 text-white bg-purple-600 p-4 rounded-full"

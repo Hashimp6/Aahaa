@@ -156,17 +156,25 @@ import {
   fetchSellersSuccess,
   fetchSellersFailure,
 } from "../redux/slices/listOfSellers";
+import SellerProfile from "./SellerProfile";
+import { useNavigate } from "react-router-dom";
 
-const SellerList = ({ latitude, longitude }) => {
+const SellerList = () => {
   const dispatch = useDispatch();
+  const user = useSelector((state) => state.auth.user);
   const { nearestSellers, loading, error } = useSelector(
     (state) => state.listOfSellers
   );
+
   const [page, setPage] = useState(1); // For pagination
   const [hasMore, setHasMore] = useState(true); // To check if there are more sellers to load
+  const navigate = useNavigate();
 
   useEffect(() => {
-    if (latitude && longitude) {
+    // Ensure user location is available
+    if (user?.location?.coordinates?.length === 2) {
+      const [longitude, latitude] = user.location.coordinates;
+
       dispatch(fetchSellersStart());
 
       // Fetch sellers with pagination
@@ -177,6 +185,7 @@ const SellerList = ({ latitude, longitude }) => {
         .then((response) => {
           const sellers = response.data.sellers;
           dispatch(fetchSellersSuccess(sellers));
+          console.log("sellers are ", sellers);
 
           // Check if there are more sellers to load
           if (sellers.length < 50) {
@@ -187,7 +196,11 @@ const SellerList = ({ latitude, longitude }) => {
           dispatch(fetchSellersFailure(err.message));
         });
     }
-  }, [latitude, longitude, page, dispatch]);
+  }, [user, page, dispatch]);
+
+  const handleClick = (seller) => {
+    navigate(`/seller-profile/${seller._id}`, { state: { sellerData: seller } });
+  };
 
   const loadMoreSellers = () => {
     if (hasMore) {
@@ -195,23 +208,50 @@ const SellerList = ({ latitude, longitude }) => {
     }
   };
 
+  if (!user?.location?.coordinates || user.location.coordinates.length !== 2) {
+    return (
+      <div className="text-red-500">Location information not available</div>
+    );
+  }
+
   if (loading) {
     return <div>Loading sellers...</div>;
   }
 
   if (error) {
-    return <div>Error: {error}</div>;
+    return <div className="text-red-500">Error: {error}</div>;
   }
 
   return (
     <div>
-      <h2>Nearest Sellers</h2>
-      <ul>
+      <ul className=" grid grid-cols-1 md:grid-cols-2 p-2 lg:grid-cols-5 gap-4">
         {nearestSellers.map((seller) => (
-          <li key={seller._id} className="p-4 border-b">
-            <h3 className="font-semibold text-lg">{seller.name}</h3>
-            <p className="text-sm text-gray-600">{seller.address}</p>
-            <p className="text-sm text-gray-500">{seller.contactNumber}</p>
+          <li
+            key={seller._id}
+            className="relative flex flex-col items-center rounded-lg p-1 group hover:bg-gray-300 transition-all duration-300 border shadow-lg"
+          >
+            {/* Profile Image */}
+            <div className="w-30 h-30 overflow-hidden">
+              <img
+                src={seller.profileImage} // Corrected to use profileImage field
+                alt={seller.companyName}
+                className="w-full h-full object-cover rounded-lg"
+              />
+            </div>
+
+            {/* Seller Info */}
+            <h3 className="mt-3 text-sm font-semibold text-gray-800">
+              {seller.companyName}
+            </h3>
+            <p className="text-xs text-gray-600">{seller.category}</p>
+
+            {/* Hover Button */}
+            <button
+              onClick={() => handleClick(seller)}
+              className="absolute bottom-4 px-4 py-2 bg-green-600 text-white text-xs rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+            >
+              Know More
+            </button>
           </li>
         ))}
       </ul>

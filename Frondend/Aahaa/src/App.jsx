@@ -6,6 +6,7 @@ import HomePage from "./pages/home";
 import Checking from "./pages/checking";
 import Profile from "./pages/profile";
 import NewSeller from "./pages/newSeller";
+import SellerProfile from "./components/SellerProfile";
 
 function App() {
   return (
@@ -16,7 +17,8 @@ function App() {
         <Route path="/home" element={<HomePage />} />
         <Route path="/check" element={<Checking />} />
         <Route path="/profile" element={<Profile />} />
-        <Route path="/sellerForm" element={<NewSeller/>} />
+        <Route path="/sellerForm" element={<NewSeller />} />
+        <Route path="/seller-profile/:id" element={<SellerProfile />} />
       </Routes>
     </Router>
   );

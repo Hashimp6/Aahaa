@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { Search, MapPin, Loader2, X } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 import { updateUserDetails } from "../redux/slices/authSlice"; // Adjust the path
 
 const LocationSelector = ({ onClose }) => {
@@ -24,6 +25,7 @@ const LocationSelector = ({ onClose }) => {
   const markerRef = useRef(null);
   const autocompleteService = useRef(null);
   const placesService = useRef(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (!navigator.geolocation) {
@@ -63,6 +65,7 @@ const LocationSelector = ({ onClose }) => {
         })
       );
       console.log("Location updated successfully:", data);
+      navigate("/home");
     } catch (error) {
       console.error(
         "Error updating location:",

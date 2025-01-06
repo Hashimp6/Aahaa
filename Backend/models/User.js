@@ -15,6 +15,7 @@ const userSchema = new mongoose.Schema({
     phone: String,
     address: String,
   },
+  favorites: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Seller' }] ,
   location: {
     type: {
       type: String,

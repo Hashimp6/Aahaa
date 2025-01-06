@@ -1,22 +1,24 @@
 const Seller = require("../models/Seller");
 const User = require("../models/User");
-const cloudinary = require('../configs/cloudinary');
-const fs = require('fs').promises; // Import fs.promises for async file operations
+const cloudinary = require("../configs/cloudinary");
+const fs = require("fs").promises; // Import fs.promises for async file operations
 
 const registerSeller = async (req, res) => {
   try {
-    // console.log("Received form data:", {
-    //   body: req.body,
-    //   file: req.file ? {
-    //     filename: req.file.filename,
-    //     path: req.file.path,
-    //     mimetype: req.file.mimetype
-    //   } : 'No file uploaded',
-    //   params: req.params
-    // });
+    console.log("Received form data:", {
+      body: req.body,
+      file: req.file
+        ? {
+            filename: req.file.filename,
+            path: req.file.path,
+            mimetype: req.file.mimetype,
+          }
+        : "No file uploaded",
+      params: req.params,
+    });
 
     const { userId } = req.params;
-    
+
     // Parse stringified JSON fields with error handling
     let coordinates, contact;
     try {
@@ -25,21 +27,23 @@ const registerSeller = async (req, res) => {
     } catch (error) {
       return res.status(400).json({
         message: "Invalid JSON format for coordinates or contact",
-        error: error.message
+        error: error.message,
       });
     }
-    
-    const {
-      companyName,
-      description,
-      category,
-      location,
-    } = req.body;
+
+    const { companyName, description, category, location } = req.body;
 
     // Validate required fields
-    if (!companyName || !location || !coordinates || !coordinates.lat || !coordinates.lng) {
+    if (
+      !companyName ||
+      !location ||
+      !coordinates ||
+      !coordinates.lat ||
+      !coordinates.lng
+    ) {
       return res.status(400).json({
-        message: "Company name, location address, and location coordinates are required.",
+        message:
+          "Company name, location address, and location coordinates are required.",
       });
     }
 
@@ -51,38 +55,40 @@ const registerSeller = async (req, res) => {
 
     // Check if the user is already a seller
     if (user.sellerDetails) {
-      return res.status(400).json({ message: "User is already registered as a seller." });
+      return res
+        .status(400)
+        .json({ message: "User is already registered as a seller." });
     }
 
     // Handle the profile image upload
-    let profileImageURL = '';
+    let profileImageURL = "";
     if (req.file) {
       try {
         // Upload image to Cloudinary
         const result = await cloudinary.uploader.upload(req.file.path, {
-          folder: 'seller_images',
-          transformation: [{ width: 300, height: 300, crop: 'limit' }],
+          folder: "seller_images",
+          transformation: [{ width: 300, height: 300, crop: "limit" }],
         });
         profileImageURL = result.secure_url;
-        
+
         // Clean up the local file after successful upload to Cloudinary
         try {
           await fs.unlink(req.file.path);
         } catch (unlinkError) {
-          console.error('Error deleting local file:', unlinkError);
+          console.error("Error deleting local file:", unlinkError);
           // Continue execution even if file deletion fails
         }
       } catch (uploadError) {
-        console.error('Cloudinary upload error:', uploadError);
+        console.error("Cloudinary upload error:", uploadError);
         // Try to clean up the file even if upload failed
         try {
           await fs.unlink(req.file.path);
         } catch (unlinkError) {
-          console.error('Error deleting local file:', unlinkError);
+          console.error("Error deleting local file:", unlinkError);
         }
         return res.status(500).json({
           message: "Error uploading image",
-          error: uploadError.message
+          error: uploadError.message,
         });
       }
     }
@@ -93,8 +99,10 @@ const registerSeller = async (req, res) => {
       description,
       category,
       profileImage: profileImageURL,
-      location,
-      coordinates,
+      location: {
+        type: "Point",
+        coordinates: [coordinates.lng, coordinates.lat], // Store as [longitude, latitude]
+      },
       contact,
     });
 
@@ -116,7 +124,7 @@ const registerSeller = async (req, res) => {
       try {
         await fs.unlink(req.file.path);
       } catch (unlinkError) {
-        console.error('Error deleting local file:', unlinkError);
+        console.error("Error deleting local file:", unlinkError);
       }
     }
     res.status(500).json({
@@ -139,29 +147,96 @@ const getAllSellers = async (req, res) => {
 
 const updateSellerDetails = async (req, res) => {
   try {
-    const { userId } = req.params;
-    const { companyName, description, category, profile, location, contact } =
-      req.body;
+    const {sellerId } = req.params;
+    const { companyName, description, category, location, coordinates, contact } = req.body;
+    // Parse stringified JSON fields with error handling
+    let  parsedContact;
+    try {
+      parsedContact = JSON.parse(contact);
+    } catch (error) {
+      return res.status(400).json({
+        message: "Invalid JSON format for coordinates or contact",
+        error: error.message,
+      });
+    }
 
-    const seller = await Seller.findById(userId);
-    if (!seller) return res.status(404).json({ message: "Seller not found." });
+    // Validate required fields
+    if (!companyName  ) {
+      return res.status(400).json({
+        message: "Company name are required.",
+      });
+    }
 
-    // Update fields if provided
-    if (companyName) seller.companyName = companyName;
-    if (description) seller.description = description;
-    if (category) seller.category = category;
-    if (profile) seller.profile = profile;
-    if (location) seller.location = location;
-    if (contact) seller.contact = contact;
+    // Check if the user exists
+    const seller = await Seller.findById(sellerId);
+    console.log("seller is ",seller);
+    if (!seller) {
+      return res.status(404).json({ message: "User not found." });
+    }
 
-    await seller.save();
-    res
-      .status(200)
-      .json({ message: "Seller details updated successfully.", seller });
+   
+
+    // Handle profile image upload if it exists in the request
+    let profileImageURL = Seller.profileImage; // Default to current image
+    if (req.file) {
+      try {
+        // Upload image to Cloudinary
+        const result = await cloudinary.uploader.upload(req.file.path, {
+          folder: "seller_images",
+          transformation: [{ width: 300, height: 300, crop: "limit" }],
+        });
+        profileImageURL = result.secure_url;
+
+        // Clean up the local file after successful upload to Cloudinary
+        try {
+          await fs.unlink(req.file.path);
+        } catch (unlinkError) {
+          console.error("Error deleting local file:", unlinkError);
+          // Continue execution even if file deletion fails
+        }
+      } catch (uploadError) {
+        console.error("Cloudinary upload error:", uploadError);
+        // Try to clean up the file even if upload failed
+        try {
+          await fs.unlink(req.file.path);
+        } catch (unlinkError) {
+          console.error("Error deleting local file:", unlinkError);
+        }
+        return res.status(500).json({
+          message: "Error uploading image",
+          error: uploadError.message,
+        });
+      }
+    }
+
+    // Update seller details in the database
+    const updatedSeller = await Seller.findOneAndUpdate(
+      {  _id: sellerId }, 
+      {
+        companyName,
+        description,
+        category,
+        profileImage: profileImageURL,
+      },
+      { new: true } // Return the updated seller document
+    );
+    console.log("Updated seller",updatedSeller);
+
+    if (!updatedSeller) {
+      return res.status(404).json({ message: "Seller not found or could not be updated." });
+    }
+
+    // Return the updated seller data
+    return res.status(200).json({
+      message: "Seller details updated successfully.",
+      seller: updatedSeller,
+    });
   } catch (error) {
-    res.status(500).json({ message: "Server error", error: error.message });
+    console.error("Error updating seller details:", error);
+    return res.status(500).json({ message: "Internal Server Error", error: error.message });
   }
 };
+
 
 const getSellerById = async (req, res) => {
   try {
@@ -180,6 +255,29 @@ const getSellerById = async (req, res) => {
     res.status(200).json(seller);
   } catch (error) {
     // Handle any errors that occur
+    res.status(500).json({
+      message: "Server error. Please try again later.",
+      error: error.message,
+    });
+  }
+};
+
+const deleteSeller = async (req, res) => {
+  try {
+    const { sellerId } = req.params; // Extract the seller ID from the URL parameter
+
+    // Find and delete the seller by ID
+    const seller = await Seller.findByIdAndDelete(sellerId);
+
+    if (!seller) {
+      // If no seller is found with the provided ID, send a 404 error
+      return res.status(404).json({ message: "Seller not found." });
+    }
+
+    // Send a success response after deletion
+    res.status(200).json({ message: "Seller deleted successfully." });
+  } catch (error) {
+    // Handle any errors that occur
     res
       .status(500)
       .json({
@@ -188,32 +286,10 @@ const getSellerById = async (req, res) => {
       });
   }
 };
-
-
-const deleteSeller = async (req, res) => {
-    try {
-      const { sellerId } = req.params;  // Extract the seller ID from the URL parameter
-      
-      // Find and delete the seller by ID
-      const seller = await Seller.findByIdAndDelete(sellerId);
-      
-      if (!seller) {
-        // If no seller is found with the provided ID, send a 404 error
-        return res.status(404).json({ message: 'Seller not found.' });
-      }
-      
-      // Send a success response after deletion
-      res.status(200).json({ message: 'Seller deleted successfully.' });
-      
-    } catch (error) {
-      // Handle any errors that occur
-      res.status(500).json({ message: 'Server error. Please try again later.', error: error.message });
-    }
-  };
 module.exports = {
   registerSeller,
   getAllSellers,
   updateSellerDetails,
   getSellerById,
-  deleteSeller
+  deleteSeller,
 };
