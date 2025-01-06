@@ -1,12 +1,13 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom"; 
-import HomePage from "./pages/home";
-import Checking from "./pages/checking";
-import Profile from "./pages/profile";
-import NewSeller from "./pages/newSeller";
-import SellerProfile from "./components/SellerProfile";
-import RegistrationPage from "./pages/registration";
+import RegistrationPage from "./pages/Registration_Page";
 import LoginPage from "./pages/Login";
+import HomePage from "./pages/Home";
+import Checking from "./pages/Checking_page";
+import Profile from "./pages/ProfilePage";
+import NewSeller from "./pages/NewSellerreg";
+import SellerProfile from "./components/SellerProfile";
+
 
 function App() {
   return (
