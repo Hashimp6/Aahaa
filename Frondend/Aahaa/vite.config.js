@@ -7,7 +7,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'https://aahaa-backend.onrender.com',
+        target: 'https://aahaa-backend.onrender.com/api',
         changeOrigin: true,
         secure: false,
       }
