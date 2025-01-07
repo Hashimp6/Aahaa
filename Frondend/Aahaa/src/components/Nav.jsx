@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import { Menu as MenuIcon } from "lucide-react";
 import LocationModal from "./LocationModel"; // Import the LocationModal component
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import AddSellerPage from "./CompanyDetails";
 import { useNavigate } from "react-router-dom";
+import { logout } from '../redux/slices/authSlice'; 
 
 const NavComponent = ({ profileImage }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -13,6 +14,7 @@ const NavComponent = ({ profileImage }) => {
 
   const user = useSelector((state) => state.auth.user);
   const isSignedIn = !!user;
+  const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const toggleMobileMenu = () => {
@@ -33,6 +35,19 @@ const NavComponent = ({ profileImage }) => {
     setSelectedLocation({ location, address });
     setIsModalOpen(false);
   };
+  const handleLogout = (e) => {
+    e.preventDefault();
+    
+    // Clear the token from localStorage if you're storing it there
+    localStorage.removeItem('token');
+    
+    // Dispatch logout action to clear Redux state
+    dispatch(logout());
+    
+    // Redirect to login page
+    navigate('/login');
+  };
+
 
   return (
     <>
@@ -156,12 +171,12 @@ const NavComponent = ({ profileImage }) => {
                         >
                           Profile
                         </a>
-                        <a
-                          href="/logout"
-                          className="block px-4 py-2 text-sm hover:bg-gray-100"
-                        >
-                          Logout
-                        </a>
+                        <button
+      onClick={handleLogout}
+      className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
+    >
+      Logout
+    </button>
                         <a
                           onClick={() => navigate("/sellerForm")} // Open the modal
                           className="block px-4 py-2 text-sm hover:bg-gray-100 cursor-pointer"

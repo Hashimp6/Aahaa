@@ -1,5 +1,11 @@
 import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom"; 
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
+import { ProtectedRoute, GuestRoute } from "./components/ProtectedRoute";
 import RegistrationPage from "./pages/Registration_Page";
 import LoginPage from "./pages/Login";
 import HomePage from "./pages/HomePage";
@@ -8,18 +14,79 @@ import Profile from "./pages/ProfilePage";
 import NewSeller from "./pages/NewSellerreg";
 import SellerProfile from "./components/SellerProfile";
 
-
 function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/register" element={<RegistrationPage />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/home" element={<HomePage />} />
-        <Route path="/check" element={<Checking />} />
-        <Route path="/profile" element={<Profile />} />
-        <Route path="/sellerForm" element={<NewSeller />} />
-        <Route path="/seller-profile/:id" element={<SellerProfile />} />
+        {/* Guest-only routes (redirect to home if logged in) */}
+        <Route
+          path="/register"
+          element={
+            <GuestRoute>
+              <RegistrationPage />
+            </GuestRoute>
+          }
+        />
+        <Route
+          path="/login"
+          element={
+            <GuestRoute>
+              <LoginPage />
+            </GuestRoute>
+          }
+        />
+
+        {/* Protected routes (redirect to login if logged out) */}
+        <Route
+          path="/home"
+          element={
+            <ProtectedRoute>
+              <HomePage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/check"
+          element={
+            <ProtectedRoute>
+              <Checking />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute>
+              <Profile />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/sellerForm"
+          element={
+            <ProtectedRoute>
+              <NewSeller />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/seller-profile/:id"
+          element={
+            <ProtectedRoute>
+              <SellerProfile />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Root route */}
+        <Route
+          path="/"
+          element={
+            <ProtectedRoute>
+              <Navigate to="/home" replace />
+            </ProtectedRoute>
+          }
+        />
       </Routes>
     </Router>
   );
