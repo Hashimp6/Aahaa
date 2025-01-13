@@ -257,7 +257,7 @@ const LocationSelector = ({ onClose }) => {
   };
 
   return (
-    <div className="w-full max-w-lg mx-auto bg-white rounded-lg shadow-lg">
+    <div className="w-full max-w-lg mx-auto bg-gray-300 rounded-lg shadow-lg">
       <button
         onClick={onClose}
         className="absolute right-4 top-4 p-1 hover:bg-gray-100 rounded-full transition-colors"

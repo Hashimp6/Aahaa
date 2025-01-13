@@ -44,7 +44,8 @@ console.log("sellers",sellers);
 // Get nearest sellers by location with category filter
 const getSellersByCategory = async (req, res) => {
   try {
-    const { latitude, longitude, category, page = 1 } = req.query;
+    console.log("querry is ",req.query);
+    const { latitude, longitude, category, } = req.query;
 
     // Ensure latitude and longitude are provided
     if (!latitude || !longitude) {
@@ -70,8 +71,6 @@ const getSellersByCategory = async (req, res) => {
 
     // Fetch the nearest sellers based on location and category filter
     const sellers = await Seller.find(query)
-      .skip((page - 1) * 50)  // Skip based on page number and limit
-      .limit(50);
 
     res.status(200).json({
       sellers,

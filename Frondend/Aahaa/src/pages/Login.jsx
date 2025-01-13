@@ -35,14 +35,14 @@ function LoginPage() {
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true); 
+    setLoading(true);
     try {
       // Make API call to login endpoint
       const response = await axios.post("/api/auth/login", formData);
 
       if (response.status === 200) {
         console.log("Login successful:", response.data);
-        setLoading(false); 
+        setLoading(false);
 
         // Dispatch the login action with the token and user data
         dispatch(
@@ -54,6 +54,7 @@ function LoginPage() {
 
         // Store token in localStorage (if you need it for persistent login)
         localStorage.setItem("token", response.data.token);
+        localStorage.setItem("user", JSON.stringify( response.data.user));
 
         // Redirect to the dashboard or homepage
         navigate("/home");
@@ -64,7 +65,6 @@ function LoginPage() {
         setError(
           err.response.data.message || "Login failed. Please try again."
         );
-       
       } else {
         // If no response was received or network error
         setError("An error occurred. Please try again later.");
@@ -113,10 +113,10 @@ function LoginPage() {
             className="hover:bg-[#03785f]"
           >
             {loading ? (
-                <CircularProgress size={24} sx={{ color: "white" }} />
-              ) : (
-                "Login"
-              )}
+              <CircularProgress size={24} sx={{ color: "white" }} />
+            ) : (
+              "Login"
+            )}
           </Button>
 
           {/* Error message */}

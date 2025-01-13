@@ -13,6 +13,10 @@ import Checking from "./pages/Checking_page";
 import Profile from "./pages/ProfilePage";
 import NewSeller from "./pages/NewSellerreg";
 import SellerProfile from "./components/SellerProfile";
+import CategoryGrid from "./pages/Categories";
+import Categories from "./pages/Categories";
+import SellerGrid from "./components/SellerGrid";
+import SellersPage from "./pages/SellersPage";
 
 function App() {
   return (
@@ -46,14 +50,6 @@ function App() {
           }
         />
         <Route
-          path="/check"
-          element={
-            <ProtectedRoute>
-              <Checking />
-            </ProtectedRoute>
-          }
-        />
-        <Route
           path="/profile"
           element={
             <ProtectedRoute>
@@ -74,6 +70,23 @@ function App() {
           element={
             <ProtectedRoute>
               <SellerProfile />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/category"
+          element={
+            <ProtectedRoute>
+              <Categories />
+            </ProtectedRoute>
+          }
+        />
+        <Route path="/categoryList/:categoryName" element={<SellersPage/>} />
+        <Route
+          path="/check"
+          element={
+            <ProtectedRoute>
+              <Checking />
             </ProtectedRoute>
           }
         />

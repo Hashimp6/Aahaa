@@ -46,7 +46,7 @@ const SellerProfile = () => {
   return (
     <div className="flex h-screen w-screen bg-gray-100 overflow-hidden">
       {/* Left Side - Fixed Profile Section */}
-      <div className="w-1/3 border-r border-gray-300 bg-white p-5 flex flex-col items-center">
+      <div className="w-1/4 border-r border-gray-300 bg-white p-5 flex flex-col items-center">
         <img
           src={sellerData.profileImage}
           alt="Profile"
@@ -98,7 +98,7 @@ const SellerProfile = () => {
       </div>
 
       {/* Right Side - Scrollable Section for Posts and Products */}
-      <div className="w-2/3 p-6 overflow-y-auto bg-white">
+      <div className="w-3/4 p-6 overflow-y-auto bg-white">
         {/* Stories Section */}
         <div className="mb-8 overflow-x-auto scrollbar-hide">
           <div className="flex space-x-4 py-4">

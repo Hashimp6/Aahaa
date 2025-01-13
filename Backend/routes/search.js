@@ -6,7 +6,7 @@ const searchRoutes = express.Router();
 searchRoutes.get('/nearest-sellers', getNearestSellers);
 
 // Route for nearest sellers by location and category
-searchRoutes.get('/sellers-with-category', getSellersByCategory);
+searchRoutes.get('/sellers-by-category', getSellersByCategory);
 
 
 module.exports = searchRoutes;

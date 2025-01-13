@@ -145,6 +145,36 @@ const deleteUser = async (req, res) => {
       });
   }
 };
+const verifyToken= async (req, res) => {
+  try {
+    // Get token from header
+    const token = req.headers.authorization?.split(' ')[1];
+    console.log("token is ",token);
+    
+    if (!token) {
+      return res.status(401).json({ message: 'No token provided' });
+    }
+
+    // Verify token
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    console.log("decoded is ",decoded);
+    // Find user (assuming you have a User model)
+    const user = await User.findById(decoded.id);
+    console.log("user is ",user);
+    
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    
+
+    res.json({ user });
+  } catch (error) {
+    console.error('Token verification error:', error);
+    res.status(401).json({ message: 'Invalid token' });
+  }
+};
+
 
 module.exports = {
   register,
@@ -152,4 +182,5 @@ module.exports = {
   getAllUsers,
   updateUserDetails,
   deleteUser,
+  verifyToken
 };

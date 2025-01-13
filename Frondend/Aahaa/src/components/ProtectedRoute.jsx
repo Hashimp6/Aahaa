@@ -1,12 +1,12 @@
+// src/components/ProtectedRoute.js
 import { Navigate, useLocation } from 'react-router-dom';
-import { useSelector } from 'react-redux';
 
 const ProtectedRoute = ({ children }) => {
-  const token = useSelector((state) => state.auth.token);
+  const token = localStorage.getItem('token');
   const location = useLocation();
 
   if (!token) {
-    // Redirect to login page but save the attempted URL
+    // No token in localStorage means user is not authenticated
     return <Navigate to="/login" state={{ from: location.pathname }} replace />;
   }
 
@@ -14,13 +14,14 @@ const ProtectedRoute = ({ children }) => {
 };
 
 const GuestRoute = ({ children }) => {
-    const token = useSelector((state) => state.auth.token);
-    
-    if (token) {
-      return <Navigate to="/home" replace />;
-    }
+  const token = localStorage.getItem('token');
   
-    return children;
-  };
-  
-  export { ProtectedRoute, GuestRoute };
+  if (token) {
+    // If token exists, redirect to home
+    return <Navigate to="/home" replace />;
+  }
+
+  return children;
+};
+
+export { ProtectedRoute, GuestRoute };

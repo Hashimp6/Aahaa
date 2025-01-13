@@ -4,7 +4,7 @@ import LocationModal from "./LocationModel"; // Import the LocationModal compone
 import { useDispatch, useSelector } from "react-redux";
 import AddSellerPage from "./CompanyDetails";
 import { useNavigate } from "react-router-dom";
-import { logout } from '../redux/slices/authSlice'; 
+import { logout } from "../redux/slices/authSlice";
 
 const NavComponent = ({ profileImage }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -37,21 +37,24 @@ const NavComponent = ({ profileImage }) => {
   };
   const handleLogout = (e) => {
     e.preventDefault();
-    
+
     // Clear the token from localStorage if you're storing it there
-    localStorage.removeItem('token');
-    
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+
     // Dispatch logout action to clear Redux state
     dispatch(logout());
-    
-    // Redirect to login page
-    navigate('/login');
-  };
 
+    // Redirect to login page
+    navigate("/login");
+  };
 
   return (
     <>
-      <nav className="bg-gradient-to-b from-black via-[#179c72] to-[#05d291] px-3 md:px-4 py-2 md:py-3 text-white">
+      <nav
+        className="bg-gradient-to-b from-black via-[#119a6f] to-[#049b83]
+SidebarComponent px-3 md:px-4 py-2 md:py-3 text-white"
+      >
         <div className="max-w-7xl mx-auto">
           {/* Desktop and Mobile Layout */}
           <div className="flex items-center justify-between">
@@ -82,8 +85,8 @@ const NavComponent = ({ profileImage }) => {
                 </svg>
                 <span>Home</span>
               </a>
-              <a
-                href="/category"
+              <button
+                onClick={() => navigate("/category")}
                 className="flex items-center space-x-2 hover:text-[#87e8d5] transition-colors"
               >
                 <svg
@@ -96,7 +99,7 @@ const NavComponent = ({ profileImage }) => {
                   <path d="M4 5h16v16H4V5zm0 8h16M12 5v16" />
                 </svg>
                 <span>Category</span>
-              </a>
+              </button>
               <a
                 href="/search"
                 className="flex items-center space-x-2 hover:text-[#87e8d5] transition-colors"
@@ -126,11 +129,11 @@ const NavComponent = ({ profileImage }) => {
 
               {/* Location Icon */}
               <button
-                className="flex items-center justify-center w-8 h-8 rounded-lg hover:bg-[#09735e] transition-colors relative"
+                className="flex items-center justify-center w-8 h-8  rounded-lg hover:bg-[#09735e] transition-colors relative"
                 onClick={handleLocationClick}
               >
                 <svg
-                  className="w-5 h-5"
+                  className="w-6 h-6"
                   viewBox="0 0 24 24"
                   fill="none"
                   stroke="currentColor"
@@ -145,20 +148,46 @@ const NavComponent = ({ profileImage }) => {
 
               {/* Profile Section */}
               <div className="relative">
-                <button
-                  onClick={toggleProfileMenu}
-                  className="flex items-center justify-center w-8 h-8 rounded-full overflow-hidden hover:ring-2 hover:ring-[#87e8d5] transition-all"
-                >
-                  <img
-                    src={
-                      isSignedIn && profileImage
-                        ? profileImage
-                        : "/default-avatar.png"
-                    }
-                    alt="Profile"
-                    className="w-full h-full object-cover"
-                  />
-                </button>
+            
+    <button
+      onClick={toggleProfileMenu}
+      className="relative w-10 h-10 rounded-lg overflow-hidden group transition-all duration-300
+                border border-emerald-400/20
+                hover:border-emerald-400/40
+                hover:shadow-[0_0_12px_rgba(135,232,213,0.2)]
+                before:content-['']
+                before:absolute
+                before:inset-0
+                before:bg-gradient-to-br
+                before:from-emerald-500/10
+                before:to-transparent
+                before:opacity-0
+                hover:before:opacity-100
+                before:transition-opacity
+                before:duration-300"
+    >
+      {isSignedIn && profileImage ? (
+        <img
+          src={profileImage}
+          alt="Profile"
+          className="w-full h-full object-cover"
+        />
+      ) : isSignedIn && user?.name ? (
+        <div
+          className="w-full h-full flex items-center justify-center text-emerald-50 font-bold text-lg
+                     bg-gradient-to-br from-[#049b83] to-[#036d5c]
+                     uppercase tracking-wide"
+        >
+          {user.name.charAt(0).toUpperCase()}
+        </div>
+      ) : (
+        <img
+          src="/default-avatar.png"
+          alt="Unknown Profile"
+          className="w-full h-full object-cover opacity-80"
+        />
+      )}
+    </button>
 
                 {/* Profile Dropdown */}
                 {profileMenuAnchor && (
@@ -172,11 +201,11 @@ const NavComponent = ({ profileImage }) => {
                           Profile
                         </a>
                         <button
-      onClick={handleLogout}
-      className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
-    >
-      Logout
-    </button>
+                          onClick={handleLogout}
+                          className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
+                        >
+                          Logout
+                        </button>
                         <a
                           onClick={() => navigate("/sellerForm")} // Open the modal
                           className="block px-4 py-2 text-sm hover:bg-gray-100 cursor-pointer"
