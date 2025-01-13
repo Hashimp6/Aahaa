@@ -38,7 +38,7 @@ const CreatePost = () => {
       formData.append("description", description);
       formData.append("user", sellerId);
 
-      const response = await axios.post("/api/posts/create", formData, {
+      const response = await axios.post("/api/post/create", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
