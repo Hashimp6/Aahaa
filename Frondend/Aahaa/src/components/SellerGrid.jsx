@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux"; // Import redux hooks
+import { useDispatch, useSelector } from "react-redux";
+import { Store, MapPin, Star, ArrowRight } from "lucide-react";
 import axios from "axios";
 
 const SellerGrid = () => {
@@ -11,84 +12,98 @@ const SellerGrid = () => {
   const location = user.location.coordinates;
 
   useEffect(() => {
-    // Check if user coordinates are available
     if (location) {
       const fetchSellers = async () => {
         try {
-          const [latitude, longitude ] = location;
-          console.log("datas is ",latitude,
-            longitude,
-            categoryName);
-          // Make the API call with category and location
-          const response = await axios.get(`http://localhost:5000/api/search/sellers-by-category`, {
+          const [latitude, longitude] = location;
+          const response = await axios.get(`/api/search/sellers-by-category`, {
             params: {
               latitude,
               longitude,
               category: categoryName,
             },
           });
-          // Log the sellers fetched from the API
-          console.log("Sellers fetched:", response.data);
-          setSellers(response.data);
+          setSellers(response.data.sellers || []);
         } catch (error) {
           console.error("Error fetching sellers:", error);
+          setSellers([]);
         }
       };
-
       fetchSellers();
     }
-  }, [categoryName, location]); // Add `categoryName` and `userLocation` as dependencies
+  }, [categoryName, location]);
 
-  const handleSellerClick = (seller) => {
-    console.log("Seller clicked:", seller);
-    // Add your navigation or modal opening logic here
-  };
+  if (!sellers || sellers.length === 0) {
+    return (
+      <div className="w-full min-h-[60vh] bg-gradient-to-br from-white to-gray-50 rounded-xl flex justify-center items-center p-8">
+        <div className="text-center space-y-3">
+          <Store size={48} className="mx-auto text-gray-400" />
+          <p className="text-xl font-medium text-gray-600">
+            No sellers found in this category
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="w-full p-6 bg-gray-100 rounded-xl">
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 xl:grid-cols-6 gap-4">
+    <div className="w-full min-h-screen bg-gradient-to-br from-white to-gray-50 p-2">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 xl:grid-cols-6 gap-4">
         {sellers.map((seller) => (
           <div
             key={seller._id}
-            onClick={() => handleSellerClick(seller)}
-            className="group relative bg-white rounded-xl overflow-hidden cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:shadow-xl border border-gray-200"
+            className="group relative bg-white rounded-2xl overflow-hidden cursor-pointer transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl border border-gray-100"
           >
-            {/* Hover Overlay */}
-            <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center z-10">
-              <div className="text-white flex items-center gap-2 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
-                <span className="font-medium">View Details</span>
-                <ArrowRight size={18} />
+            {/* Gradient Overlay */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end justify-center p-6 z-10">
+              <div className="text-white flex flex-col items-center gap-3 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
+                <span className="font-medium text-lg">View Details</span>
+                <ArrowRight size={24} className="animate-pulse" />
               </div>
             </div>
 
             {/* Image Section */}
-            <div className="relative h-48">
+            <div className="relative h-40">
+              <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-purple-500/10" />
               <img
-                src={seller.profileImage}
+                src={seller.profileImage || "/placeholder-image.jpg"}
                 alt={seller.companyName}
-                className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
               />
               {/* Rating Badge */}
-              <div className="absolute top-3 right-3 bg-white/90 px-2 py-1 rounded-full flex items-center gap-1">
-                <Star size={14} className="text-yellow-400" />
-                <span className="text-gray-700 text-xs font-medium">
-                  {seller.rating}
+              <div className="absolute top-4 right-4 bg-white/95 px-3 py-1.5 rounded-full flex items-center gap-1.5 shadow-lg">
+                <Star size={16} className="text-yellow-500" />
+                <span className="text-gray-700 font-semibold">
+                  {seller.rating || "N/A"}
                 </span>
               </div>
             </div>
 
             {/* Content Section */}
-            <div className="p-4 space-y-1">
-              <h3 className="text-lg font-semibold text-gray-900 truncate">
+            <div className="p-2 space-y-1 bg-white">
+              <h3 className="text-xl font-bold text-gray-800 truncate">
                 {seller.companyName}
               </h3>
-              <div className="space-y-1">
-                <div className="flex items-center gap-2 text-gray-600 text-sm">
-                  <Store size={16} className="text-gray-400" />
-                  <span className="truncate">{seller.category}</span>
+              <div>
+                <div className="flex items-center gap-3 text-gray-600">
+                  <div className=" bg-gray-100 rounded-lg">
+                    <Store size={16} className="text-gray-500" />
+                  </div>
+                  <span className="truncate text-sm font-medium">
+                    {seller.category}
+                  </span>
                 </div>
-                <div className="flex items-center gap-2 text-gray-600 text-sm">
-                  <MapPin size={16} className="text-gray-400" />
-                  <span className="truncate">{seller.location}</span>
+                <div className="flex items-center gap-3 text-gray-600">
+                  <div className=" bg-gray-100 rounded-lg">
+                    <MapPin size={16} className="text-gray-500" />
+                  </div>
+                  <span className="truncate text-sm font-medium">
+                    {seller.location && seller.location.coordinates
+                      ? `${seller.location.coordinates[0].toFixed(
+                          4
+                        )}, ${seller.location.coordinates[1].toFixed(4)}`
+                      : "Location not available"}
+                  </span>
                 </div>
               </div>
             </div>

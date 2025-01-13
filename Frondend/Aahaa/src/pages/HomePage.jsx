@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { login } from "../redux/slices/authSlice";
 import NavComponent from "../components/Nav";
@@ -11,19 +11,19 @@ import LocationSelector from "../components/LocationModel";
 function HomePage() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const user = useSelector((state) => state.auth.user);
 
-  // Check if user has valid location coordinates
+  // Get user from localStorage instead of Redux
+  const storedUser = JSON.parse(localStorage.getItem("user"));
+
+  // Check if user has valid location coordinates from localStorage
   const hasValidLocation =
-    user?.location?.coordinates &&
-    (user.location.coordinates[0] !== 0 || user.location.coordinates[1] !== 0);
+    storedUser?.location?.coordinates &&
+    (storedUser.location.coordinates[0] !== 0 ||
+      storedUser.location.coordinates[1] !== 0);
+      console.log("local user is ",storedUser,"has vali",hasValidLocation);
 
   useEffect(() => {
-    // Check if the user already exists in Redux
-    if (user) {
-      return;
-    }
-
+    // Check if the user exists in localStorage
     const token = localStorage.getItem("token");
     const storedUser = localStorage.getItem("user");
 
@@ -33,10 +33,10 @@ function HomePage() {
     } else {
       navigate("/login");
     }
-  }, [user, dispatch, navigate]);
+  }, [dispatch, navigate]);
 
   // Show loading state while checking user auth
-  if (!user) {
+  if (!storedUser) {
     return (
       <div className="fixed w-full h-screen flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-4 border-gray-900 border-t-transparent"></div>

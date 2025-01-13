@@ -5,6 +5,7 @@ const searchRoutes = require('./routes/search');
 const categoryRouter = require('./routes/category');
 const productRouter = require('./routes/products');
 const favRouter = require('./routes/fav');
+const postRouter = require('./routes/post');
 
 const app = express();
 
@@ -16,6 +17,7 @@ app.use('/api/search', searchRoutes);
 app.use('/api/category', categoryRouter);
 app.use('/api/product', productRouter);
 app.use('/api/favorite', favRouter);
+app.use('/api/post', postRouter);
 
 
 module.exports = app;
