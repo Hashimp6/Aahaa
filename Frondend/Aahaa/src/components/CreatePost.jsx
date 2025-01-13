@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { 
+import {
   Box,
   Typography,
   Button,
   TextField,
   Paper,
-  CircularProgress
+  CircularProgress,
 } from "@mui/material";
 import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
 
@@ -33,12 +33,14 @@ const CreatePost = () => {
     setError("");
 
     try {
+      console.log("descr", description);
       const formData = new FormData();
       formData.append("media", mediaFile);
       formData.append("description", description);
-      formData.append("user", sellerId);
+      formData.append("seller", sellerId); // Changed from "user" to "seller"
 
       const response = await axios.post("/api/post/create", formData, {
+        // Changed endpoint
         headers: {
           "Content-Type": "multipart/form-data",
         },
@@ -48,8 +50,8 @@ const CreatePost = () => {
       setMediaFile(null);
       setPreview(null);
       alert("Post created successfully!");
-      
     } catch (err) {
+      console.error("Error details:", err); // Added for better debugging
       setError(err.response?.data?.message || "Failed to create post");
     } finally {
       setLoading(false);
@@ -63,7 +65,7 @@ const CreatePost = () => {
         justifyContent: "center",
         alignItems: "center",
         minHeight: "100vh",
-        padding: 2
+        padding: 2,
       }}
     >
       <Paper
@@ -74,14 +76,18 @@ const CreatePost = () => {
           p: 3,
           display: "flex",
           flexDirection: "column",
-          gap: 2
+          gap: 2,
         }}
       >
         <Typography variant="h5" component="h2" gutterBottom>
           Create New Post
         </Typography>
 
-        <Box component="form" onSubmit={handleSubmit} sx={{ gap: 2, display: "flex", flexDirection: "column" }}>
+        <Box
+          component="form"
+          onSubmit={handleSubmit}
+          sx={{ gap: 2, display: "flex", flexDirection: "column" }}
+        >
           <Box>
             {preview ? (
               <Box sx={{ position: "relative" }}>
@@ -92,7 +98,7 @@ const CreatePost = () => {
                     width: "100%",
                     height: 300,
                     objectFit: "cover",
-                    borderRadius: 8
+                    borderRadius: 8,
                   }}
                 />
                 <Button
@@ -105,8 +111,8 @@ const CreatePost = () => {
                     bgcolor: "white",
                     color: "primary.main",
                     "&:hover": {
-                      bgcolor: "grey.100"
-                    }
+                      bgcolor: "grey.100",
+                    },
                   }}
                   onClick={() => {
                     setMediaFile(null);
@@ -124,7 +130,7 @@ const CreatePost = () => {
                   borderRadius: 2,
                   p: 3,
                   textAlign: "center",
-                  cursor: "pointer"
+                  cursor: "pointer",
                 }}
                 component="label"
               >
@@ -134,7 +140,9 @@ const CreatePost = () => {
                   accept="image/*,video/*"
                   onChange={handleFileChange}
                 />
-                <AddPhotoAlternateIcon sx={{ fontSize: 40, color: "grey.500", mb: 1 }} />
+                <AddPhotoAlternateIcon
+                  sx={{ fontSize: 40, color: "grey.500", mb: 1 }}
+                />
                 <Typography color="textSecondary">
                   Click to upload media
                 </Typography>

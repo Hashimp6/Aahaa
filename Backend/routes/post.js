@@ -12,7 +12,7 @@ const postRouter = express.Router();
 postRouter.post('/create', upload.single('media'), createPost);
 
 // GET route to retrieve posts by a specific user
-postRouter.get("/user/:userId", getPostsByUser);
+postRouter.get("/seller/:sellerId", getPostsByUser);
 
 // DELETE route to delete a post by its ID
 postRouter.delete("/:postId", deletePost);
