@@ -16,7 +16,7 @@ const CreatePost = () => {
   const [preview, setPreview] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const sellerId = "tht677e88ad4503ab9e540c63a6";
+  const sellerId = "677e88ad4503ab9e540c63a6";
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
