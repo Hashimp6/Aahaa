@@ -6,8 +6,8 @@ export default defineConfig({
   plugins: [react()],
   server: {
     proxy: {
-      "/api": {
-        target: "https://aahaa-backend.onrender.com",
+      '/api': {
+        target: 'https://aahaa-backend.onrender.com',
         changeOrigin: true,
         secure: false,
       },
