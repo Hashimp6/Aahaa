@@ -2,9 +2,10 @@ const { cloudinary_js_config } = require('../configs/cloudinary');
 const Post = require('../models/Post');
 
 // Create a new post and upload media to Cloudinary
+
 const createPost = async (req, res) => {
     try {
-        console.log("body is",req.body);
+        console.log("body is", req.body);
         const { description, seller } = req.body;
 
         // Validate file existence
@@ -13,14 +14,17 @@ const createPost = async (req, res) => {
         }
 
         // Upload file to Cloudinary
-        const result = await cloudinary_js_config.uploader.upload(req.file.path);
-        
+        const result = await cloudinary.uploader.upload(req.file.path, {
+            resource_type: 'auto',
+            folder: 'posts' // optional - creates a folder in cloudinary
+        });
+
         const newPost = new Post({
-            media: result.secure_url,  
+            media: result.secure_url,
             description,
             seller
         });
-        
+
         await newPost.save();
         res.status(201).json({ message: 'Post created successfully!', post: newPost });
     } catch (error) {
