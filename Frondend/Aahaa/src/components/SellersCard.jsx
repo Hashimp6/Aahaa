@@ -150,7 +150,7 @@ const SellerList = () => {
                       className="text-gray-400 group-hover:text-gray-500 transition-colors duration-300"
                     />
                     <span className="truncate">
-                      {formatLocation(seller.location)}
+                      {seller.place}
                     </span>
                   </div>
                 </div>

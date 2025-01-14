@@ -22,9 +22,10 @@ const SellerForm = () => {
   const navigate = useNavigate();
   const user = useSelector((state) => state.auth.user);
   const sellerData = useSelector((state) => state.seller.sellerData);
+
   const userId = user?._id;
-  const isUpdate = !!sellerData;
-  const sellerId=sellerData._id
+  const isUpdate = sellerData !== null && sellerData !== undefined;
+  const sellerId = isUpdate ? sellerData._id : null;
 
   const [formData, setFormData] = useState({
     companyName: "",
@@ -49,31 +50,6 @@ const SellerForm = () => {
   const [loading, setLoading] = useState(false);
   const fileInputRef = useRef(null);
 
-  useEffect(() => {
-    if (sellerData) {
-      setFormData({
-        companyName: sellerData.companyName || "",
-        description: sellerData.description || "",
-        category: sellerData.category || "",
-        location: sellerData.location || "",
-        coordinates: {
-          lat: sellerData.location?.coordinates[1] || null,
-          lng: sellerData.location?.coordinates[0] || null,
-        },
-        contact: {
-          phone: sellerData.contact?.phone || "",
-          whatsapp: sellerData.contact?.whatsapp || "",
-          instagram: sellerData.contact?.instagram || "",
-          email: sellerData.contact?.email || "",
-        },
-      });
-
-      if (sellerData.profileImage) {
-        setImagePreview(sellerData.profileImage);
-      }
-    }
-  }, [sellerData]);
-
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -93,6 +69,31 @@ const SellerForm = () => {
       reader.readAsDataURL(file);
     }
   };
+
+  useEffect(() => {
+    if (sellerData && Object.keys(sellerData).length > 0) {
+      setFormData({
+        companyName: sellerData.companyName || "",
+        description: sellerData.description || "",
+        category: sellerData.category || "",
+        location: sellerData.location || "",
+        coordinates: {
+          lat: sellerData.location?.coordinates?.[1] || null,
+          lng: sellerData.location?.coordinates?.[0] || null,
+        },
+        contact: {
+          phone: sellerData.contact?.phone || "",
+          whatsapp: sellerData.contact?.whatsapp || "",
+          instagram: sellerData.contact?.instagram || "",
+          email: sellerData.contact?.email || "",
+        },
+      });
+
+      if (sellerData.profileImage) {
+        setImagePreview(sellerData.profileImage);
+      }
+    }
+  }, [sellerData]);
 
   useEffect(() => {
     if (window.google) {
@@ -118,29 +119,32 @@ const SellerForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    
-    const formDataToSend = new FormData();
-    formDataToSend.append("companyName", formData.companyName);
-    formDataToSend.append("description", formData.description);
-    formDataToSend.append("category", formData.category);
-    formDataToSend.append("location", formData.location);
-    formDataToSend.append("coordinates", JSON.stringify(formData.coordinates));
-    formDataToSend.append("contact", JSON.stringify(formData.contact));
+    setError(null);
 
-    if (formData.profileImage && typeof formData.profileImage !== 'string') {
-      formDataToSend.append("profileImage", formData.profileImage);
-    }
-
-
-    console.log("FormData Entries:");
-    for (const pair of formDataToSend.entries()) {
-        console.log(`${pair[0]}:`, pair[1]);
-    }
     try {
+      console.log("location from frnd ends",formData.location);
+      if (!userId) {
+        throw new Error("User not found. Please login again.");
+      }
+
+      const formDataToSend = new FormData();
+      formDataToSend.append("companyName", formData.companyName);
+      formDataToSend.append("description", formData.description);
+      formDataToSend.append("category", formData.category);
+      formDataToSend.append("location", formData.location);
+      formDataToSend.append(
+        "coordinates",
+        JSON.stringify(formData.coordinates)
+      );
+      formDataToSend.append("contact", JSON.stringify(formData.contact));
+
+      if (formData.profileImage && typeof formData.profileImage !== "string") {
+        formDataToSend.append("profileImage", formData.profileImage);
+      }
+
       let response;
-      
-      if (isUpdate) {
-        // Update existing seller
+
+      if (isUpdate && sellerId) {
         response = await axios.patch(
           `/api/sellers/${sellerId}`,
           formDataToSend,
@@ -151,7 +155,6 @@ const SellerForm = () => {
           }
         );
       } else {
-        // Register new seller
         response = await axios.post(
           `/api/sellers/register/${userId}`,
           formDataToSend,
@@ -164,13 +167,15 @@ const SellerForm = () => {
       }
 
       if (response.status === 200 || response.status === 201) {
-        console.log(isUpdate ? "Seller updated successfully:" : "Seller registered successfully:", response.data);
-        setLoading(false);
         navigate("/home");
       }
     } catch (err) {
-      setError("An error occurred. Please try again later.");
+      setError(
+        err.response?.data?.message ||
+          "An error occurred. Please try again later."
+      );
       console.error("Error:", err);
+    } finally {
       setLoading(false);
     }
   };
@@ -183,7 +188,6 @@ const SellerForm = () => {
         </Typography>
 
         <form onSubmit={handleSubmit}>
-          {/* Profile Image Upload */}
           <Box display="flex" flexDirection="column" alignItems="center" mb={4}>
             <Box
               onClick={() => fileInputRef.current?.click()}
@@ -230,7 +234,6 @@ const SellerForm = () => {
           </Box>
 
           <Box display="flex" flexDirection="column" gap={3}>
-            {/* Form fields remain the same */}
             <TextField
               label="Company Name"
               value={formData.companyName}
@@ -271,6 +274,8 @@ const SellerForm = () => {
                 <MenuItem value="restaurant">Restaurant</MenuItem>
                 <MenuItem value="supermarket">Supermarket</MenuItem>
                 <MenuItem value="hotel">Hotel</MenuItem>
+                <MenuItem value="wedding">Wedding</MenuItem>
+                <MenuItem value="art">Art</MenuItem>
                 <MenuItem value="other">Other</MenuItem>
               </Select>
             </FormControl>
@@ -357,8 +362,10 @@ const SellerForm = () => {
             >
               {loading ? (
                 <CircularProgress size={24} sx={{ color: "white" }} />
+              ) : isUpdate ? (
+                "Update Seller"
               ) : (
-                isUpdate ? "Update Seller" : "Add Seller"
+                "Add Seller"
               )}
             </Button>
           </Box>

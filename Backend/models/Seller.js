@@ -11,16 +11,17 @@ const sellerSchema = new mongoose.Schema(
       type: String,
       trim: true,
     },
+    place:{type:String},
     category: {
       type: String,
     },
-    profileImage: { // Changed from 'profile' to 'profileImage'
+    profileImage: { 
       type: String,
     },
     location: {
       type: {
         type: String,
-        enum: ['Point'], // GeoJSON Point
+        enum: ['Point'], 
         default: 'Point',
       },
       coordinates: {
@@ -33,7 +34,6 @@ const sellerSchema = new mongoose.Schema(
       instagram: String,
       whatsapp: String,
       email: { type: String, trim: true },
-      address: String,
     },
     posts: [
       {

@@ -33,11 +33,11 @@ const CreatePost = () => {
     setError("");
 
     try {
-      console.log("descr", description);
+      console.log("descr", description, sellerId);
       const formData = new FormData();
       formData.append("media", mediaFile);
       formData.append("description", description);
-      formData.append("seller", sellerId); // Changed from "user" to "seller"
+      formData.append("seller", sellerId);
 
       const response = await axios.post("/api/post/create", formData, {
         // Changed endpoint
@@ -51,7 +51,7 @@ const CreatePost = () => {
       setPreview(null);
       alert("Post created successfully!");
     } catch (err) {
-      console.error("Error details:", err); // Added for better debugging
+      console.error("Error details:", err);
       setError(err.response?.data?.message || "Failed to create post");
     } finally {
       setLoading(false);

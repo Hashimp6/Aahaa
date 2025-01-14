@@ -41,31 +41,41 @@ const LocationSelector = ({ onClose }) => {
   const handleConfirmLocation = async () => {
     setLoading(true);
     try {
-      console.log(
-        "address is ",
-        address,
-        "coordinates",
-        coordinates,
-        "user",
-        userId
-      );
-
       const response = await axios.patch(`/api/auth/user/${userId}`, {
         address,
         coordinates,
       });
-
+  
       const { data } = response;
-
-      // Update Redux state after successful backend update
+  
+      // Update Redux state
       dispatch(
         updateUserDetails({
           address: data.user.contact.address,
           coordinates: data.user.location.coordinates,
         })
       );
-      console.log("Location updated successfully:", data);
-      navigate("/home");
+      
+      // Update localStorage user data
+      const currentUser = JSON.parse(localStorage.getItem("user"));
+      const updatedUser = {
+        ...currentUser,
+        contact: {
+          ...currentUser.contact,
+          address: data.user.contact.address,
+        },
+        location: {
+          coordinates: data.user.location.coordinates,
+        },
+      };
+      localStorage.setItem("user", JSON.stringify(updatedUser));
+      
+      // Set flag that location has been set
+      localStorage.setItem("locationSet", "true");
+      
+      // Navigate to home
+      window.location.href = "/home";
+      
     } catch (error) {
       console.error(
         "Error updating location:",

@@ -32,7 +32,7 @@ const registerSeller = async (req, res) => {
     }
 
     const { companyName, description, category, location } = req.body;
-
+console.log("loc in body is",location);
     // Validate required fields
     if (
       !companyName ||
@@ -97,6 +97,7 @@ const registerSeller = async (req, res) => {
     const newSeller = new Seller({
       companyName,
       description,
+      place:location,
       category,
       profileImage: profileImageURL,
       location: {

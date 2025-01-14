@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Menu as MenuIcon } from "lucide-react";
+import { Menu as MenuIcon, Package } from "lucide-react";
 import LocationModal from "./LocationModel"; // Import the LocationModal component
 import { useDispatch, useSelector } from "react-redux";
 import AddSellerPage from "./CompanyDetails";
@@ -100,6 +100,13 @@ SidebarComponent px-3 md:px-4 py-2 md:py-3 text-white"
                 </svg>
                 <span>Category</span>
               </button>
+              <button
+                onClick={() => navigate("/products")}
+                className="flex items-center space-x-2 px-4 py-2 rounded-md hover:bg-gray-100 hover:text-blue-600 transition-all duration-200"
+              >
+                <Package size={20} />
+                <span className="font-medium">Products</span>
+              </button>
               <a
                 href="/search"
                 className="flex items-center space-x-2 hover:text-[#87e8d5] transition-colors"
@@ -148,10 +155,9 @@ SidebarComponent px-3 md:px-4 py-2 md:py-3 text-white"
 
               {/* Profile Section */}
               <div className="relative">
-            
-    <button
-      onClick={toggleProfileMenu}
-      className="relative w-10 h-10 rounded-lg overflow-hidden group transition-all duration-300
+                <button
+                  onClick={toggleProfileMenu}
+                  className="relative w-10 h-10 rounded-lg overflow-hidden group transition-all duration-300
                 border border-emerald-400/20
                 hover:border-emerald-400/40
                 hover:shadow-[0_0_12px_rgba(135,232,213,0.2)]
@@ -165,29 +171,29 @@ SidebarComponent px-3 md:px-4 py-2 md:py-3 text-white"
                 hover:before:opacity-100
                 before:transition-opacity
                 before:duration-300"
-    >
-      {isSignedIn && profileImage ? (
-        <img
-          src={profileImage}
-          alt="Profile"
-          className="w-full h-full object-cover"
-        />
-      ) : isSignedIn && user?.name ? (
-        <div
-          className="w-full h-full flex items-center justify-center text-emerald-50 font-bold text-lg
+                >
+                  {isSignedIn && profileImage ? (
+                    <img
+                      src={profileImage}
+                      alt="Profile"
+                      className="w-full h-full object-cover"
+                    />
+                  ) : isSignedIn && user?.name ? (
+                    <div
+                      className="w-full h-full flex items-center justify-center text-emerald-50 font-bold text-lg
                      bg-gradient-to-br from-[#049b83] to-[#036d5c]
                      uppercase tracking-wide"
-        >
-          {user.name.charAt(0).toUpperCase()}
-        </div>
-      ) : (
-        <img
-          src="/default-avatar.png"
-          alt="Unknown Profile"
-          className="w-full h-full object-cover opacity-80"
-        />
-      )}
-    </button>
+                    >
+                      {user.name.charAt(0).toUpperCase()}
+                    </div>
+                  ) : (
+                    <img
+                      src="/default-avatar.png"
+                      alt="Unknown Profile"
+                      className="w-full h-full object-cover opacity-80"
+                    />
+                  )}
+                </button>
 
                 {/* Profile Dropdown */}
                 {profileMenuAnchor && (
