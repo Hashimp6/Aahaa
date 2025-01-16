@@ -10,7 +10,7 @@ import CreatePost from "../components/CreatePost";
 const Checking = () => {
   return (
     <div className="flex h-screen bg-gray-100">
-     <CreatePost/>
+    <AddCategoryModal/>
     </div>
   );
 };

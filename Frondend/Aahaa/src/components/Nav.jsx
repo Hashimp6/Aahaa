@@ -100,12 +100,9 @@ SidebarComponent px-3 md:px-4 py-2 md:py-3 text-white"
                 </svg>
                 <span>Category</span>
               </button>
-              <button
-                onClick={() => navigate("/products")}
-                className="flex items-center space-x-2 px-4 py-2 rounded-md hover:bg-gray-100 hover:text-blue-600 transition-all duration-200"
-              >
+              <button className="flex items-center space-x-2 hover:text-[#87e8d5] transition-colors">
                 <Package size={20} />
-                <span className="font-medium">Products</span>
+                <span >Products</span>
               </button>
               <a
                 href="/search"
@@ -197,7 +194,7 @@ SidebarComponent px-3 md:px-4 py-2 md:py-3 text-white"
 
                 {/* Profile Dropdown */}
                 {profileMenuAnchor && (
-                  <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-1 text-gray-700">
+                  <div className="absolute right-0 mt-2 z-10 w-48 bg-white rounded-lg shadow-lg py-1 text-gray-700">
                     {isSignedIn ? (
                       <>
                         <a

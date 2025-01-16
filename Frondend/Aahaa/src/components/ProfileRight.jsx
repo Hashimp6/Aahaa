@@ -371,6 +371,7 @@ const RightSideComponent = () => {
                     <CreateStory 
                         onSuccess={handleStorySuccess}
                         onClose={handleStoryModalClose}
+                        showSnackbar={(message, type) => console.log(message, type)} 
                     />
                 </DialogContent>
                 <DialogActions>

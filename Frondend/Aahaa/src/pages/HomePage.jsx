@@ -66,7 +66,7 @@ function HomePage() {
       <NavComponent />
       <div className="flex flex-1 overflow-hidden">
         <SidebarComponent />
-        <div className="w-full p-2 overflow-y-auto">
+        <div className="w-full p-2 z-0 overflow-y-auto">
           <SellerList />
         </div>
       </div>
