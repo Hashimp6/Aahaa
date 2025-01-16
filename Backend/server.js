@@ -12,10 +12,13 @@ connectDB();
 const app = require("./app"); // Import app configuration
 
 // Enable CORS for all origins (you can also specify origins here)
+
 app.use(cors({
-    origin:[ 'https://aahaa-fronend.vercel.app','http://localhost:5173'], // Allow only your frontend domain
-    credentials: true
+  origin: ['https://aahaa-fronend.vercel.app', 'http://localhost:5173'],  // Update with actual domains
+  credentials: true,
 }));
+
+
 
 
 // Start server

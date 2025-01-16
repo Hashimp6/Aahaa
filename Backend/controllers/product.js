@@ -1,35 +1,47 @@
-const { cloudinary_js_config } = require('../configs/cloudinary');
+
 const Product = require('../models/Product');
+const cloudinary = require("../configs/cloudinary");
+const fs = require("fs");
 
   // Add a new product
  const createProduct= async (req, res) => {
-    try {
-      const { productName, description, price, quantity, stars } = req.body;
-      const sellerId = req.params.sellerId;
+  try {
+    const { productName, description, price, quantity, stars } = req.body;
+    const sellerId = req.params.sellerId;
 
-      if (!req.file) {
-        return res.status(400).json({ message: 'Product image is required' });
-      }
-
-      // Upload image to cloudinary
-      const result = await cloudinary_js_config.uploader.upload(req.file.path);
-
-      const product = new Product({
-        seller: sellerId,
-        productName,
-        description,
-        price,
-        quantity,
-        stars,
-        productImage: result.secure_url
-      });
-
-      await product.save();
-      res.status(201).json(product);
-    } catch (error) {
-      res.status(500).json({ message: error.message });
+    if (!req.file) {
+      return res.status(400).json({ message: 'Product image is required' });
     }
+
+    // Upload image to cloudinary
+    const result = await cloudinary.uploader.upload(req.file.path);
+
+    // Create new product
+    const product = new Product({
+      seller: sellerId,
+      productName,
+      description,
+      price,
+      quantity,
+      stars,
+      productImage: result.secure_url
+    });
+
+    // Save product to database
+    await product.save();
+
+    // Delete the local file after successful upload to cloudinary
+    fs.unlink(req.file.path, (err) => {
+      if (err) console.error('Error deleting local file:', err);
+    });
+
+    res.status(201).json(product);
+  } catch (error) {
+    
+    res.status(500).json({ message: error.message });
   }
+};
+
 
   // Get all products
  const getAllProducts= async (req, res) => {

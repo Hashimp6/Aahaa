@@ -19,6 +19,7 @@ import {
 import CreatePost from "./CreatePost";
 import CreateStory from "./CreateStory";
 import { useSelector } from "react-redux";
+import ProductsGrid from "./ProfileProduct";
 
 // Separate Snackbar component
 const Snackbar = ({ message, type, onClose }) => {
@@ -58,7 +59,6 @@ const RightSideComponent = () => {
 
   const [stories, setStories] = useState([]);
   const [posts, setPosts] = useState([]);
-  const [products, setProducts] = useState([]);
 
   useEffect(() => {
     fetchPosts();
@@ -155,28 +155,9 @@ const RightSideComponent = () => {
     }
   };
 
-  const handleDeleteProduct = (id) => {
-    setProducts(products.filter((product) => product.id !== id));
-    showSnackbar("Product deleted successfully!");
-  };
+ 
 
-  const RatingStars = ({ rating }) => {
-    return (
-      <div className="flex items-center">
-        {[...Array(5)].map((_, index) => (
-          <Star
-            key={index}
-            className={`w-4 h-4 ${
-              index < Math.floor(rating)
-                ? "text-yellow-400 fill-yellow-400"
-                : "text-gray-300"
-            }`}
-          />
-        ))}
-        <span className="ml-1 text-sm text-gray-600">{rating}</span>
-      </div>
-    );
-  };
+
 
   return (
     <div className="max-w-7xl mx-auto px-4">
@@ -303,62 +284,9 @@ const RightSideComponent = () => {
 
       {/* Products Grid */}
       {activeTab === "products" && (
-        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-4">
-          {/* Add Product Card */}
-          <div className="bg-white p-4 rounded-lg shadow-md border-2 border-dashed border-[#049b83] flex flex-col items-center justify-center cursor-pointer hover:border-[#038671] transition-colors min-h-[300px]">
-            <PlusCircle className="w-12 h-12 text-[#049b83] mb-3" />
-            <p className="text-[#049b83] font-medium">Add New Product</p>
-            <p className="text-sm text-gray-500 mt-2 text-center">
-              List your products for sale
-            </p>
-          </div>
-          {/* Existing Products */}
-          {products.map((product) => (
-            <div
-              key={product.id}
-              className="bg-white rounded-lg shadow-md overflow-hidden"
-            >
-              <div className="relative">
-                <img
-                  src={product.image}
-                  alt={product.name}
-                  className="w-full h-48 object-cover"
-                />
-                {!product.inStock && (
-                  <div className="absolute top-2 right-2 bg-red-500 text-white px-2 py-1 rounded-md text-xs">
-                    Out of Stock
-                  </div>
-                )}
-                <button
-                  onClick={() => handleDeleteProduct(product.id)}
-                  className="absolute top-2 right-2 text-white hover:text-red-500 transition-colors"
-                >
-                  <Trash2 className="w-5 h-5" />
-                </button>
-              </div>
-              <div className="p-4">
-                <h3 className="font-medium text-lg mb-1">{product.name}</h3>
-                <p className="text-sm text-gray-600 mb-2">{product.description}</p>
-                <div className="flex items-center justify-between mb-3">
-                  <RatingStars rating={product.rating} />
-                  <span className="font-bold text-lg">${product.price}</span>
-                </div>
-                <button
-                  className={`w-full py-2 px-4 rounded-md flex items-center justify-center space-x-2 ${
-                    product.inStock
-                      ? "bg-[#049b83] text-white hover:bg-[#038671]"
-                      : "bg-gray-300 text-gray-500 cursor-not-allowed"
-                  }`}
-                  disabled={!product.inStock}
-                >
-                  <ShoppingCart className="w-4 h-4" />
-                  <span>{product.inStock ? "Add to Cart" : "Out of Stock"}</span>
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
+  <ProductsGrid/>
+)}
+       
 
        <Dialog 
                 open={storyModalOpen} 

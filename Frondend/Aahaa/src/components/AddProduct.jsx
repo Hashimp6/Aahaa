@@ -16,8 +16,8 @@ import { useSelector } from "react-redux";
 
 const AddProduct = () => {
   const navigate = useNavigate();
-  const user = useSelector((state) => state.auth.user);
-  const sellerId = user?.seller?._id;
+  const sellerData = useSelector((state) => state.seller.sellerData);
+  const sellerId = sellerData._id;
 
   // Form state
   const [formData, setFormData] = useState({

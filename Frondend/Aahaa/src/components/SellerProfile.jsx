@@ -7,11 +7,12 @@ import {
   Settings,
   AddPhotoAlternate,
 } from "@mui/icons-material";
-import { useLocation } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import axios from "axios";
 
 const SellerProfile = () => {
+  const { id } = useParams();
   const location = useLocation();
   const { sellerData } = location.state || {};
   const sellerDetails = useSelector((state) => state.seller.sellerData);
@@ -24,7 +25,7 @@ const SellerProfile = () => {
 
   const fetchPosts = async () => {
     try {
-      const response = await axios.get(`/api/post/seller/${sellerId}`);
+      const response = await axios.get(`/api/post/seller/${id}`);
       setPosts(response.data);
     } catch (error) {
       console.error("Error fetching posts:", error);
