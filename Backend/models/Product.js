@@ -19,9 +19,9 @@ const productSchema = new mongoose.Schema({
     ref: 'User',
     required: true
   },
-  images: [{
+  productImage: {
     type: String // URL to product images
-  }],
+  },
   category: {
     type: String,
   },

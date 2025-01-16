@@ -95,7 +95,7 @@ const AddProduct = () => {
 
       if (response.status === 201) {
         console.log("Product added successfully:", response.data);
-        navigate("/products");
+        navigate(-1);
       }
     } catch (err) {
       setError(err.response?.data?.message || "An error occurred. Please try again later.");
