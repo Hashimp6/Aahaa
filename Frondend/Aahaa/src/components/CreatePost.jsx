@@ -1,22 +1,17 @@
 import React, { useState } from "react";
+import { Upload, X, ImagePlus, Loader2 } from "lucide-react";
+import { useSelector } from "react-redux";
 import axios from "axios";
-import {
-  Box,
-  Typography,
-  Button,
-  TextField,
-  Paper,
-  CircularProgress,
-} from "@mui/material";
-import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
 
-const CreatePost = () => {
+const CreatePost = ({ onSuccess }) => {
   const [description, setDescription] = useState("");
   const [mediaFile, setMediaFile] = useState(null);
   const [preview, setPreview] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const sellerId = "677e88ad4503ab9e540c63a6";
+
+  // Get seller ID from Redux store
+  const sellerData = useSelector((state) => state.seller.sellerData);
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
@@ -33,155 +28,123 @@ const CreatePost = () => {
     setError("");
 
     try {
-      console.log("descr", description, sellerId);
+      if (!mediaFile) {
+        throw new Error("Please select a media file");
+      }
+
       const formData = new FormData();
       formData.append("media", mediaFile);
       formData.append("description", description);
-      formData.append("seller", sellerId);
+      formData.append("seller", sellerData._id);
 
       const response = await axios.post("/api/post/create", formData, {
-        // Changed endpoint
         headers: {
           "Content-Type": "multipart/form-data",
         },
       });
 
-      setDescription("");
-      setMediaFile(null);
-      setPreview(null);
-      alert("Post created successfully!");
+      if (response.data) {
+        // Reset form
+        setDescription("");
+        setMediaFile(null);
+        setPreview(null);
+        
+        // Call the onSuccess callback
+        if (onSuccess) {
+          onSuccess();
+        }
+      }
     } catch (err) {
-      console.error("Error details:", err);
+      console.error("Error creating post:", err);
       setError(err.response?.data?.message || "Failed to create post");
     } finally {
       setLoading(false);
     }
   };
 
+  // Rest of your component remains the same
   return (
-    <Box
-      sx={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        minHeight: "100vh",
-        padding: 2,
-      }}
-    >
-      <Paper
-        elevation={3}
-        sx={{
-          width: 400,
-          height: 600,
-          p: 3,
-          display: "flex",
-          flexDirection: "column",
-          gap: 2,
-        }}
-      >
-        <Typography variant="h5" component="h2" gutterBottom>
-          Create New Post
-        </Typography>
+    <div className="bg-gradient-to-br from-green-50 to-emerald-50 p-1">
+      <div className="w-full bg-white/80 backdrop-blur-sm rounded-lg shadow-lg">
+        <div className="p-6">
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="space-y-4">
+              {preview ? (
+                <div className="relative rounded-lg overflow-hidden group">
+                  <img
+                    src={preview}
+                    alt="Preview"
+                    className="w-full h-64 object-cover transition-transform duration-300 group-hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                    <button
+                      type="button"
+                      className="absolute top-2 right-2 bg-white text-gray-700 px-3 py-1.5 rounded-md text-sm font-medium flex items-center gap-2 hover:bg-gray-100 transition-colors"
+                      onClick={() => {
+                        setMediaFile(null);
+                        setPreview(null);
+                      }}
+                    >
+                      <X className="w-4 h-4" />
+                      Remove
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <label className="relative block">
+                  <div className="border-2 border-dashed border-gray-200 rounded-lg p-8 hover:border-[#038671] transition-colors duration-300 cursor-pointer">
+                    <input
+                      type="file"
+                      className="hidden"
+                      accept="image/*,video/*"
+                      onChange={handleFileChange}
+                    />
+                    <div className="flex flex-col items-center gap-2 text-gray-500">
+                      <div className="p-3 bg-green-50 rounded-full">
+                        <ImagePlus className="w-6 h-6 text-[#038671]" />
+                      </div>
+                      <p className="font-medium">Drop your media here</p>
+                      <p className="text-sm">or click to browse</p>
+                    </div>
+                  </div>
+                </label>
+              )}
 
-        <Box
-          component="form"
-          onSubmit={handleSubmit}
-          sx={{ gap: 2, display: "flex", flexDirection: "column" }}
-        >
-          <Box>
-            {preview ? (
-              <Box sx={{ position: "relative" }}>
-                <img
-                  src={preview}
-                  alt="Preview"
-                  style={{
-                    width: "100%",
-                    height: 300,
-                    objectFit: "cover",
-                    borderRadius: 8,
-                  }}
-                />
-                <Button
-                  variant="contained"
-                  size="small"
-                  sx={{
-                    position: "absolute",
-                    top: 8,
-                    right: 8,
-                    bgcolor: "white",
-                    color: "primary.main",
-                    "&:hover": {
-                      bgcolor: "grey.100",
-                    },
-                  }}
-                  onClick={() => {
-                    setMediaFile(null);
-                    setPreview(null);
-                  }}
-                >
-                  Change
-                </Button>
-              </Box>
-            ) : (
-              <Box
-                sx={{
-                  border: "2px dashed",
-                  borderColor: "grey.300",
-                  borderRadius: 2,
-                  p: 3,
-                  textAlign: "center",
-                  cursor: "pointer",
-                }}
-                component="label"
-              >
-                <input
-                  type="file"
-                  hidden
-                  accept="image/*,video/*"
-                  onChange={handleFileChange}
-                />
-                <AddPhotoAlternateIcon
-                  sx={{ fontSize: 40, color: "grey.500", mb: 1 }}
-                />
-                <Typography color="textSecondary">
-                  Click to upload media
-                </Typography>
-              </Box>
-            )}
-          </Box>
+              <textarea
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                placeholder="What's on your mind?"
+                className="w-full min-h-[120px] p-3 rounded-lg border border-gray-200 focus:border-[#038671] focus:ring-1 focus:ring-[#038671] outline-none resize-none"
+              />
 
-          <TextField
-            multiline
-            rows={4}
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            label="Description"
-            placeholder="Write your post description..."
-            fullWidth
-          />
+              {error && (
+                <div className="bg-red-50 text-red-600 p-3 rounded-lg text-sm">
+                  {error}
+                </div>
+              )}
+            </div>
 
-          {error && (
-            <Typography color="error" variant="body2">
-              {error}
-            </Typography>
-          )}
-
-          <Button
-            type="submit"
-            variant="contained"
-            disabled={loading || !mediaFile}
-            fullWidth
-            sx={{ mt: "auto" }}
-          >
-            {loading ? (
-              <CircularProgress size={24} color="inherit" />
-            ) : (
-              "Create Post"
-            )}
-          </Button>
-        </Box>
-      </Paper>
-    </Box>
+            <button
+              type="submit"
+              disabled={loading || !mediaFile}
+              className="w-full bg-[#038671] hover:bg-[#026957] text-white py-2.5 px-4 rounded-lg font-medium flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            >
+              {loading ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  Creating...
+                </>
+              ) : (
+                <>
+                  <Upload className="w-4 h-4" />
+                  Share Post
+                </>
+              )}
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
   );
 };
 

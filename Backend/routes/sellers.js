@@ -13,7 +13,7 @@ const upload = require('../configs/multer');
 // Add multer middleware to handle multipart form data
 sellerRoutes.post('/register/:userId', upload.single('profileImage'), registerSeller);// Register a new seller
 sellerRoutes.get("/all", getAllSellers); // Get all sellers
-sellerRoutes.get('/seller/:userId', getSellerById); // Get a specific seller by ID
+sellerRoutes.get('/seller/:sellerId', getSellerById); // Get a specific seller by ID
 sellerRoutes.patch('/:sellerId', upload.single('profileImage'),updateSellerDetails); // Update a seller's details
 sellerRoutes.delete('/:sellerId', deleteSeller);
 

@@ -241,11 +241,11 @@ const updateSellerDetails = async (req, res) => {
 
 const getSellerById = async (req, res) => {
   try {
-    const { userId } = req.params;
-    console.log("user id ", userId); // Extract the seller ID from the URL parameter
+    const { sellerId } = req.params;
+    console.log("user id ", sellerId); // Extract the seller ID from the URL parameter
 
     // Find the seller by ID
-    const seller = await Seller.findById(userId);
+    const seller = await Seller.findById(sellerId);
 
     if (!seller) {
       // If no seller is found with the provided ID, send a 404 error

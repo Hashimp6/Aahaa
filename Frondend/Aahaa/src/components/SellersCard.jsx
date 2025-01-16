@@ -53,17 +53,7 @@ const SellerList = () => {
     }
   };
 
-  const formatLocation = (location) => {
-    if (!location) return "Location not available";
-    if (typeof location === "string") return location;
-    if (location.address) return location.address;
-    if (location.coordinates) {
-      return `${location.coordinates[1].toFixed(
-        2
-      )}°N, ${location.coordinates[0].toFixed(2)}°E`;
-    }
-    return "Location not available";
-  };
+ 
 
   if (!user?.location?.coordinates || user.location.coordinates.length !== 2) {
     return (
@@ -96,7 +86,7 @@ const SellerList = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 p-6">
+    <div className=" bg-gray-100 p-6">
       <ul className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6">
         {nearestSellers.map((seller) => (
           <li

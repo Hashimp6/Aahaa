@@ -24,13 +24,16 @@ const Profile = () => {
       }
 
       try {
+     
+        const sellerId=user.sellerDetails
+        console.log("seller detalils ",sellerId);
         const response = await axios.get(
-          `/api/sellers/seller/${user.sellerDetails}`
+          `/api/sellers/seller/${sellerId}`
         );
-        
+
         // Log the response data before dispatching
         console.log("API Response:", response.data);
-        
+
         // Verify the response data has the expected structure
         if (response.data) {
           dispatch(setSellerData(response.data));
@@ -64,7 +67,7 @@ const Profile = () => {
   }
 
   return (
-    <div className="flex h-screen bg-gray-100">
+    <div className="flex  bg-gray-100">
       {/* Left Side - Fixed */}
       <div className="w-1/4 border-r border-gray-300 bg-white">
         <LeftSideComponent />

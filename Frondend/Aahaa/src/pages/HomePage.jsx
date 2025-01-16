@@ -62,9 +62,9 @@ function HomePage() {
 
   // Main content
   return (
-    <div className="fixed w-full">
+    <div className="fixed w-full h-screen flex flex-col">
       <NavComponent />
-      <div className="flex">
+      <div className="flex flex-1 overflow-hidden">
         <SidebarComponent />
         <div className="w-full p-2 overflow-y-auto">
           <SellerList />

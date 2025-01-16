@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Instagram,
   WhatsApp,
@@ -8,13 +8,33 @@ import {
   AddPhotoAlternate,
 } from "@mui/icons-material";
 import { useLocation } from "react-router-dom";
+import { useSelector } from "react-redux";
+import axios from "axios";
 
 const SellerProfile = () => {
   const location = useLocation();
   const { sellerData } = location.state || {};
-
+  const sellerDetails = useSelector((state) => state.seller.sellerData);
+  const sellerId = sellerDetails._id;
+  const [posts, setPosts] = useState([]);
   const [activeTab, setActiveTab] = useState("posts");
+  useEffect(() => {
+    fetchPosts();
+  }, [sellerId]);
 
+  const fetchPosts = async () => {
+    try {
+      const response = await axios.get(`/api/post/seller/${sellerId}`);
+      setPosts(response.data);
+    } catch (error) {
+      console.error("Error fetching posts:", error);
+      showSnackbar(
+        error.response?.data?.message || "Error fetching posts",
+        "error"
+      );
+      setLoading(false);
+    }
+  };
   // Dummy stories data (replace with actual data)
   const stories = [
     {
@@ -44,7 +64,7 @@ const SellerProfile = () => {
   console.log("seller data in component", sellerData);
 
   return (
-    <div className="flex h-screen w-screen bg-gray-100 overflow-hidden">
+    <div className="flex  w-screen bg-gray-100 overflow-hidden">
       {/* Left Side - Fixed Profile Section */}
       <div className="w-1/4 border-r border-gray-300 bg-white p-5 flex flex-col items-center">
         <img
@@ -87,24 +107,17 @@ const SellerProfile = () => {
         </div>
 
         {/* Settings and Add Post Buttons */}
-        <div className="flex justify-between mt-6 w-full">
-          <button className="flex items-center gap-2 text-black bg-gray-200 px-4 py-2 rounded-full">
-            <Settings /> Edit Profile
-          </button>
-          <button className="flex items-center gap-2 text-white bg-purple-600 px-4 py-2 rounded-full">
-            <AddPhotoAlternate /> Add Post
-          </button>
-        </div>
+        <div className="flex justify-between mt-6 w-full"></div>
       </div>
 
       {/* Right Side - Scrollable Section for Posts and Products */}
-      <div className="w-3/4 p-6 overflow-y-auto bg-white">
+      <div className="w-3/4 p-4 overflow-y-auto bg-white">
         {/* Stories Section */}
-        <div className="mb-8 overflow-x-auto scrollbar-hide">
+        <div className=" overflow-x-auto pl-2 scrollbar-hide">
           <div className="flex space-x-4 py-4">
             {stories.map((story) => (
               <div key={story.id} className="flex-shrink-0">
-                <div className="w-40 h-40 rounded-lg overflow-hidden ring-2 ring-purple-500 p-0.5 bg-white relative">
+                <div className="w-32 h-32 rounded-lg overflow-hidden ring-2 ring-purple-500 p-0.5 bg-white relative">
                   <img
                     src={story.image}
                     alt={story.title}
@@ -150,12 +163,12 @@ const SellerProfile = () => {
 
         {/* Posts Section */}
         {activeTab === "posts" && (
-          <div className="grid grid-cols-2 gap-4">
-            {sellerData.posts.length > 0 ? (
-              sellerData.posts.map((post, index) => (
+          <div className="grid grid-cols-5 gap-4">
+            {posts.length > 0 ? (
+              posts.map((post, index) => (
                 <div key={index} className="bg-white p-4 rounded-lg shadow-md">
                   <img
-                    src={post.image}
+                    src={post.media}
                     alt="Post"
                     className="w-full h-40 object-cover rounded-lg"
                   />
