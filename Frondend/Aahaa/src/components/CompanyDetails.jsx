@@ -19,6 +19,7 @@ import axios from "axios";
 import { useSelector } from "react-redux";
 
 const SellerForm = () => {
+  const API_URL = process.env.REACT_APP_API_URL; 
   const navigate = useNavigate();
   const user = useSelector((state) => state.auth.user);
   const sellerData = useSelector((state) => state.seller.sellerData);
@@ -146,7 +147,7 @@ const SellerForm = () => {
 
       if (isUpdate && sellerId) {
         response = await axios.patch(
-          `/api/sellers/${sellerId}`,
+          `${API_URL}/sellers/${sellerId}`,
           formDataToSend,
           {
             headers: {
@@ -156,7 +157,7 @@ const SellerForm = () => {
         );
       } else {
         response = await axios.post(
-          `/api/sellers/register/${userId}`,
+          `${API_URL}/sellers/register/${userId}`,
           formDataToSend,
           {
             headers: {

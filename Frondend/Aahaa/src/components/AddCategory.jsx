@@ -11,6 +11,7 @@ import {
 import CameraAltIcon from "@mui/icons-material/CameraAlt";
 
 const AddCategoryModal = ({ onClose }) => {
+  const API_URL = process.env.REACT_APP_API_URL; 
   const [name, setName] = useState("");
   const [colorCode, setColorCode] = useState("");
   const [image, setImage] = useState(null);
@@ -42,7 +43,7 @@ const AddCategoryModal = ({ onClose }) => {
       setLoading(true);
       // Make sure the URL matches the correct backend route
       const response = await axios.post(
-        "/api/category/add", // Adjust to the correct API route
+       ` ${ API_URL }/category/add`, // Adjust to the correct API route
         formData,
         {
           headers: {

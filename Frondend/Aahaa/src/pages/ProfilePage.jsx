@@ -6,6 +6,7 @@ import LeftSideComponent from "../components/ProfileLeft";
 import RightSideComponent from "../components/ProfileRight";
 
 const Profile = () => {
+  const API_URL = process.env.REACT_APP_API_URL; 
   const dispatch = useDispatch();
   const user = useSelector((state) => state.auth.user);
   const [loading, setLoading] = useState(true);
@@ -28,7 +29,7 @@ const Profile = () => {
         const sellerId=user.sellerDetails
         console.log("seller detalils ",sellerId);
         const response = await axios.get(
-          `/api/sellers/seller/${sellerId}`
+          `${API_URL}/sellers/seller/${sellerId}`
         );
 
         // Log the response data before dispatching

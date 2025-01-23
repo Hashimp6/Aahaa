@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { setCategories } from "../redux/slices/categorySlice"; // Adjust the path if needed
 
 const CategoryList = () => {
+  const API_URL = process.env.REACT_APP_API_URL; 
   const [loading, setLoading] = useState(true); // Loading state
   const categories = useSelector((state) => state.category.categories); // Access categories from Redux
   const dispatch = useDispatch(); // Dispatch function to update Redux store
@@ -12,7 +13,7 @@ const CategoryList = () => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await axios.get("/api/category/all");
+        const response = await axios.get(`${API_URL}/category/all`);
         dispatch(setCategories(response.data.categories)); // Dispatch to store categories in Redux
         setLoading(false); // Set loading to false after fetching
       } catch (error) {

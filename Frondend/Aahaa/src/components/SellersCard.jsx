@@ -10,6 +10,7 @@ import {
 } from "../redux/slices/listOfSellers";
 
 const SellerList = () => {
+  const API_URL = process.env.REACT_APP_API_URL; 
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const user = useSelector((state) => state.auth.user);
@@ -25,7 +26,7 @@ const SellerList = () => {
       const [longitude, latitude] = user.location.coordinates;
       dispatch(fetchSellersStart());
       axios
-        .get("/api/search/nearest-sellers", {
+        .get(`${API_URL}/search/nearest-sellers`, {
           params: { latitude, longitude, page },
         })
         .then((response) => {

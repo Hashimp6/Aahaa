@@ -7,7 +7,7 @@ import { login } from "../redux/slices/authSlice"; // Import login action from t
 
 function LoginPage() {
   // State for form fields
-
+  const API_URL = process.env.REACT_APP_API_URL; 
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     email: "",
@@ -38,7 +38,7 @@ function LoginPage() {
     setLoading(true);
     try {
       // Make API call to login endpoint
-      const response = await axios.post("https://aahaa-backend.onrender.com/auth/login", formData);
+      const response = await axios.post(`${API_URL}/auth/login`, formData);
 
       if (response.status === 200) {
         console.log("Login successful:", response.data);

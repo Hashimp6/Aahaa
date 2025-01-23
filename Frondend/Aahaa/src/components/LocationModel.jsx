@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { updateUserDetails } from "../redux/slices/authSlice"; // Adjust the path
 
 const LocationSelector = ({ onClose }) => {
+  const API_URL = process.env.REACT_APP_API_URL; 
   const [searchValue, setSearchValue] = useState("");
   const [mapCenter, setMapCenter] = useState({ lat: 51.5074, lng: -0.1278 });
   const [markerPosition, setMarkerPosition] = useState(null);
@@ -41,7 +42,7 @@ const LocationSelector = ({ onClose }) => {
   const handleConfirmLocation = async () => {
     setLoading(true);
     try {
-      const response = await axios.patch(`/api/auth/user/${userId}`, {
+      const response = await axios.patch(`${API_URL}/auth/user/${userId}`, {
         address,
         coordinates,
       });

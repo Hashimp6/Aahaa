@@ -12,6 +12,7 @@ import { useSelector } from "react-redux";
 import axios from "axios";
 
 const SellerProfile = () => {
+  const API_URL = process.env.REACT_APP_API_URL; 
   const { id } = useParams();
   const location = useLocation();
   const { sellerData } = location.state || {};
@@ -25,7 +26,7 @@ const SellerProfile = () => {
 
   const fetchPosts = async () => {
     try {
-      const response = await axios.get(`/api/post/seller/${id}`);
+      const response = await axios.get(`${API_URL}/post/seller/${id}`);
       setPosts(response.data);
     } catch (error) {
       console.error("Error fetching posts:", error);

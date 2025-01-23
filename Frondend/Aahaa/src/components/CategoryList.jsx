@@ -6,6 +6,7 @@ import { setCategories } from "../redux/slices/categorySlice";
 import { useNavigate } from "react-router-dom";
 
 const CategoryGrid = () => {
+  const API_URL = process.env.REACT_APP_API_URL; 
   const [loading, setLoading] = useState(true);
   const categories = useSelector((state) => state.category.categories);
   const dispatch = useDispatch();
@@ -14,7 +15,7 @@ const CategoryGrid = () => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await axios.get("/api/category/all");
+        const response = await axios.get(`${API_URL}/category/all`);
         dispatch(setCategories(response.data.categories));
         setLoading(false);
       } catch (error) {

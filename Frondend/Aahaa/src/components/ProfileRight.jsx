@@ -45,6 +45,7 @@ const Snackbar = ({ message, type, onClose }) => {
 };
 
 const RightSideComponent = () => {
+  const API_URL = process.env.REACT_APP_API_URL; 
   const [activeTab, setActiveTab] = useState("posts");
   const [open, setOpen] = useState(false);
   const [storyModalOpen, setStoryModalOpen] = useState(false);
@@ -68,7 +69,7 @@ const RightSideComponent = () => {
   const fetchPosts = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(`/api/post/seller/${sellerId}`);
+      const response = await axios.get(`${API_URL}/post/seller/${sellerId}`);
       setPosts(response.data);
       setLoading(false);
     } catch (error) {
@@ -83,7 +84,7 @@ const RightSideComponent = () => {
 
   const fetchStories = async () => {
     try {
-      const response = await axios.get(`/api/stories/seller/${sellerId}`);
+      const response = await axios.get(`${API_URL}/stories/seller/${sellerId}`);
       setStories(response.data);
     } catch (error) {
       console.error("Error fetching stories:", error);
@@ -127,7 +128,7 @@ const RightSideComponent = () => {
 
   const handleDeleteStory = async (storyId) => {
     try {
-      await axios.delete(`/api/stories/${storyId}`);
+      await axios.delete(`${API_URL}/stories/${storyId}`);
       setStories((prevStories) => 
         prevStories.filter((story) => story.id !== storyId)
       );
@@ -143,7 +144,7 @@ const RightSideComponent = () => {
 
   const handleDeletePost = async (postId) => {
     try {
-      await axios.delete(`/api/post/${postId}`);
+      await axios.delete(`${API_URL}/post/${postId}`);
       await fetchPosts();
       showSnackbar("Post deleted successfully!");
     } catch (error) {

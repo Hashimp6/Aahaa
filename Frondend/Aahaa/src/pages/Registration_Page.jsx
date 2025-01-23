@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom"; // For navigation to Login page
 import axios from "axios";
 
 function RegistrationPage() {
+  const API_URL = process.env.REACT_APP_API_URL; 
   // State for form fields
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
@@ -33,7 +34,7 @@ function RegistrationPage() {
     setLoading(true); 
     try {
       // Use relative URL - the proxy will handle the forwarding
-      const response = await axios.post("https://aahaa-backend.onrender.com/auth/register", formData);
+      const response = await axios.post(`${API_URL}/auth/register`, formData);
 
       if (response.status === 201) {
         console.log("Registration successful:", response.data);

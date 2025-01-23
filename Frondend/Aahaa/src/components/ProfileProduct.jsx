@@ -26,6 +26,7 @@ const Modal = ({ isOpen, onClose, children }) => {
 };
 
 const ProductsGrid = () => {
+    const API_URL = process.env.REACT_APP_API_URL; 
   const [products, setProducts] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -36,7 +37,7 @@ const ProductsGrid = () => {
   const fetchProducts = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(`/api/product/seller/${sellerId}`);
+      const response = await axios.get(`${API_URL}/product/seller/${sellerId}`);
       setProducts(response.data);
     } catch (err) {
       setError("Failed to fetch products");
@@ -61,7 +62,7 @@ const ProductsGrid = () => {
     if (window.confirm("Are you sure you want to delete this product?")) {
       try {
         setLoading(true);
-        await axios.delete(`/api/product/${productId}`);
+        await axios.delete(`${API_URL}/product/${productId}`);
         setProducts(products.filter((product) => product._id !== productId));
       } catch (err) {
         setError("Failed to delete product");

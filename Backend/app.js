@@ -20,13 +20,13 @@ app.use(cors({
 app.use(express.json()); 
 app.use(express.urlencoded({ extended: true }));
 app.use('/auth', authRouter);
-app.use('/api/sellers', sellerRoutes);
-app.use('/api/search', searchRoutes);
-app.use('/api/category', categoryRouter);
-app.use('/api/product', productRouter);
-app.use('/api/favorite', favRouter);
-app.use('/api/post', postRouter);
-app.use('/api/stories', storiesRouter);
+app.use('/sellers', sellerRoutes);
+app.use('/search', searchRoutes);
+app.use('/category', categoryRouter);
+app.use('/product', productRouter);
+app.use('/favorite', favRouter);
+app.use('/post', postRouter);
+app.use('/stories', storiesRouter);
 
 
 module.exports = app;

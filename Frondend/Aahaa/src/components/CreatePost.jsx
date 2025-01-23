@@ -4,6 +4,7 @@ import { useSelector } from "react-redux";
 import axios from "axios";
 
 const CreatePost = ({ onSuccess }) => {
+  const API_URL = process.env.REACT_APP_API_URL; 
   const [description, setDescription] = useState("");
   const [mediaFile, setMediaFile] = useState(null);
   const [preview, setPreview] = useState(null);
@@ -37,7 +38,7 @@ const CreatePost = ({ onSuccess }) => {
       formData.append("description", description);
       formData.append("seller", sellerData._id);
 
-      const response = await axios.post("/api/post/create", formData, {
+      const response = await axios.post(`${API_URL}/post/create`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },

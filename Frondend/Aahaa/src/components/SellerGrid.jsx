@@ -5,6 +5,7 @@ import { Store, MapPin, Star, ArrowRight } from "lucide-react";
 import axios from "axios";
 
 const SellerGrid = () => {
+  const API_URL = process.env.REACT_APP_API_URL; 
   const { categoryName } = useParams();
   const [sellers, setSellers] = useState([]);
   const dispatch = useDispatch();
@@ -17,7 +18,7 @@ const SellerGrid = () => {
       const fetchSellers = async () => {
         try {
           const [latitude, longitude] = location;
-          const response = await axios.get(`/api/search/sellers-by-category`, {
+          const response = await axios.get(`${API_URL}/search/sellers-by-category`, {
             params: {
               latitude,
               longitude,
