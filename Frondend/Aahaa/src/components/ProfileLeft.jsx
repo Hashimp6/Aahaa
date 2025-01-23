@@ -1,5 +1,5 @@
 import React from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import {
   Instagram,
@@ -7,11 +7,13 @@ import {
   Phone,
   Mail,
   Settings,
-  ImagePlus,
+  LogOut,
+  ClipboardList
 } from "lucide-react";
 
 const LeftSideComponent = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const sellerData = useSelector((state) => state.seller.sellerData) || {
     companyName: "Default Company",
     category: "Default Category",
@@ -24,82 +26,102 @@ const LeftSideComponent = () => {
     },
   };
 
+  const handleSignOut = () => {
+    // dispatch(logoutAction());
+    navigate("/login");
+  };
+
   return (
-    <div className="flex flex-col bg-white text-black p-3 md:p-5 h-full min-h-screen max-w-md mx-auto md:max-w-none">
-      {/* Profile Section */}
-      <div className="space-y-6 mb-6">
-        {/* Profile Image */}
-        <div className="flex justify-center relative">
+    <div className="flex flex-col bg-white shadow-lg rounded-xl p-6 h-full">
+      {/* Header with Profile */}
+      <div className="relative mb-6">
+        <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-r from-teal-500 to-teal-600 rounded-t-xl -mx-6 -mt-6" />
+        
+        <div className="relative flex flex-col items-center">
           <img
             src="../../public/puffs.png"
             alt="Profile"
-            className="rounded-full w-24 h-24 md:w-32 md:h-32 border-4 border-gray-300 object-cover"
+            className="rounded-full w-28 h-28 border-4 border-white shadow-md object-cover mt-4"
           />
-        </div>
-
-        {/* User Info */}
-        <div className="text-center space-y-2">
-          <h1 className="text-xl md:text-2xl font-bold">
+          <h1 className="text-xl font-bold text-gray-800 mt-3">
             {sellerData.companyName}
           </h1>
-          <p className="text-base md:text-lg text-gray-600">
+          <p className="text-base text-teal-600 font-medium">
             {sellerData.category}
           </p>
-          <p className="text-sm text-gray-500 px-4">{sellerData.description}</p>
+          <p className="text-sm text-gray-600 text-center mt-2 max-w-sm">
+            {sellerData.description}
+          </p>
         </div>
       </div>
 
-      {/* Social Links */}
-      <div className="grid grid-cols-2 md:flex md:flex-wrap gap-2 justify-center mb-6">
-        <a
-          href={sellerData.contact.instagram}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex items-center justify-center gap-2 text-white px-4 py-2 rounded-lg text-sm md:text-base transition-transform hover:scale-105"
-          style={{
-            background:
-              "linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888)",
-          }}
+      {/* Quick Actions */}
+      <div className="grid grid-cols-3 gap-4 mb-6">
+        <button
+          onClick={() => navigate("/orders")}
+          className="flex flex-col items-center p-3 bg-teal-50 rounded-xl hover:bg-teal-100 transition-all hover:shadow-md"
         >
-          <Instagram className="w-4 h-4 md:w-5 md:h-5" />
-          <span className="hidden md:inline">Instagram</span>
-        </a>
-        <a
-          href={sellerData.contact.whatsapp}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex items-center justify-center gap-2 text-white bg-green-500 px-4 py-2 rounded-lg text-sm md:text-base transition-transform hover:scale-105"
-        >
-          <MessageSquare className="w-4 h-4 md:w-5 md:h-5" />
-          <span className="hidden md:inline">WhatsApp</span>
-        </a>
-        <a
-          href={`tel:${sellerData.contact.phone}`}
-          className="flex items-center justify-center gap-2 text-white bg-blue-600 px-4 py-2 rounded-lg text-sm md:text-base transition-transform hover:scale-105"
-        >
-          <Phone className="w-4 h-4 md:w-5 md:h-5" />
-          <span className="hidden md:inline">Call</span>
-        </a>
-        <a
-          href={`mailto:${sellerData.contact.email}`}
-          className="flex items-center justify-center gap-2 text-white bg-red-500 px-4 py-2 rounded-lg text-sm md:text-base transition-transform hover:scale-105"
-        >
-          <Mail className="w-4 h-4 md:w-5 md:h-5" />
-          <span className="hidden md:inline">Email</span>
-        </a>
-      </div>
-
-      {/* Action Buttons */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mt-4">
+          <ClipboardList className="w-6 h-6 text-teal-600" />
+          <span className="text-sm mt-1 text-teal-600 font-medium">Orders</span>
+        </button>
         <button
           onClick={() => navigate("/sellerForm")}
-          className="flex flex-col items-center justify-center p-3 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
+          className="flex flex-col items-center p-3 bg-teal-50 rounded-xl hover:bg-teal-100 transition-all hover:shadow-md"
         >
-          <Settings className="w-5 h-5 md:w-6 md:h-6 text-gray-700" />
-          <span className="text-xs md:text-sm mt-1">Edit Profile</span>
+          <Settings className="w-6 h-6 text-teal-600" />
+          <span className="text-sm mt-1 text-teal-600 font-medium">Settings</span>
         </button>
+        <button
+          onClick={handleSignOut}
+          className="flex flex-col items-center p-3 bg-red-50 rounded-xl hover:bg-red-100 transition-all hover:shadow-md"
+        >
+          <LogOut className="w-6 h-6 text-red-500" />
+          <span className="text-sm mt-1 text-red-500 font-medium">Logout</span>
+        </button>
+      </div>
 
-       
+      {/* Contact Links */}
+      <div className="space-y-3">
+        <h2 className="text-base font-semibold text-gray-800 mb-3">Contact Information</h2>
+        <div className="grid grid-cols-2 gap-3">
+          <a
+            href={sellerData.contact.instagram}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center justify-center gap-2 p-3 rounded-xl text-white text-sm hover:opacity-90 transition-all hover:shadow-md"
+            style={{
+              background: "linear-gradient(45deg, #f09433, #e6683c 75%, #dc2743)",
+            }}
+          >
+            <Instagram className="w-5 h-5" />
+            <span className="font-medium">Instagram</span>
+          </a>
+          <a
+            href={sellerData.contact.whatsapp}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center justify-center gap-2 p-3 rounded-xl bg-green-500 text-white text-sm hover:opacity-90 transition-all hover:shadow-md"
+          >
+            <MessageSquare className="w-5 h-5" />
+            <span className="font-medium">WhatsApp</span>
+          </a>
+        </div>
+        <div className="grid grid-cols-2 gap-3">
+          <a
+            href={`tel:${sellerData.contact.phone}`}
+            className="flex items-center justify-center gap-2 p-3 rounded-xl bg-teal-500 text-white text-sm hover:opacity-90 transition-all hover:shadow-md"
+          >
+            <Phone className="w-5 h-5" />
+            <span className="font-medium">Call</span>
+          </a>
+          <a
+            href={`mailto:${sellerData.contact.email}`}
+            className="flex items-center justify-center gap-2 p-3 rounded-xl bg-teal-600 text-white text-sm hover:opacity-90 transition-all hover:shadow-md"
+          >
+            <Mail className="w-5 h-5" />
+            <span className="font-medium">Email</span>
+          </a>
+        </div>
       </div>
     </div>
   );

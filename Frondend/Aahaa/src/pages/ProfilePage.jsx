@@ -69,7 +69,7 @@ const Profile = () => {
   return (
     <div className="flex  bg-gray-100">
       {/* Left Side - Fixed */}
-      <div className="w-1/4 border-r border-gray-300 bg-white">
+      <div className=" border-r border-gray-300 bg-white">
         <LeftSideComponent />
       </div>
 

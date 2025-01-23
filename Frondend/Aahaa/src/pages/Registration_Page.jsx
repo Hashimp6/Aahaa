@@ -33,7 +33,7 @@ function RegistrationPage() {
     setLoading(true); 
     try {
       // Use relative URL - the proxy will handle the forwarding
-      const response = await axios.post("/api/auth/register", formData);
+      const response = await axios.post("https://aahaa-backend.onrender.com/auth/register", formData);
 
       if (response.status === 201) {
         console.log("Registration successful:", response.data);

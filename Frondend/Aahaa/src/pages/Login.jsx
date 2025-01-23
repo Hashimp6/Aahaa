@@ -38,7 +38,7 @@ function LoginPage() {
     setLoading(true);
     try {
       // Make API call to login endpoint
-      const response = await axios.post("/api/auth/login", formData);
+      const response = await axios.post("https://aahaa-backend.onrender.com/auth/login", formData);
 
       if (response.status === 200) {
         console.log("Login successful:", response.data);

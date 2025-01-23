@@ -35,7 +35,7 @@ const CreateStory = ({ onSuccess, onClose, showSnackbar }) => {
     const formData = new FormData();
     formData.append("description", description);
     formData.append("seller", sellerData._id);
-    formData.append("file", mediaFile);
+    formData.append("media", mediaFile);
 
     try {
       const response = await axios.post("/api/stories/create", formData, {

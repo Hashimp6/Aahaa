@@ -134,14 +134,9 @@ const ProductsGrid = () => {
                 <Trash2 className="w-5 h-5" />
               </button>
             </div>
-            <div className="p-4">
-              <h3 className="font-medium text-lg mb-1">
-                {product.productName}
-              </h3>
-              <p className="text-sm text-gray-600 mb-2 line-clamp-2">
-                {product.description}
-              </p>
-              <div className="flex items-center justify-between mb-3">
+            <div className="p-2">
+              <h3 className="font-medium text-lg">{product.productName}</h3>
+              <div className="flex items-center justify-between mb-1">
                 <span className="font-bold text-lg">₹{product.price}</span>
                 <span className="text-sm text-gray-500">
                   Stock: {product.quantity}

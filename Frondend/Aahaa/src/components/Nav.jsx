@@ -5,10 +5,11 @@ import { useDispatch, useSelector } from "react-redux";
 import AddSellerPage from "./CompanyDetails";
 import { useNavigate } from "react-router-dom";
 import { logout } from "../redux/slices/authSlice";
+import ProfileDrawer from "./ProfileDrawer";
 
 const NavComponent = ({ profileImage }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [profileMenuAnchor, setProfileMenuAnchor] = useState(false);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false); 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedLocation, setSelectedLocation] = useState(null);
 
@@ -21,8 +22,8 @@ const NavComponent = ({ profileImage }) => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
   };
 
-  const toggleProfileMenu = () => {
-    setProfileMenuAnchor(!profileMenuAnchor);
+  const toggleDrawer = () => {
+    setIsDrawerOpen(!isDrawerOpen);
   };
 
   const handleLocationClick = () => {
@@ -153,7 +154,7 @@ SidebarComponent px-3 md:px-4 py-2 md:py-3 text-white"
               {/* Profile Section */}
               <div className="relative">
                 <button
-                  onClick={toggleProfileMenu}
+                  onClick={toggleDrawer}
                   className="relative w-10 h-10 rounded-lg overflow-hidden group transition-all duration-300
                 border border-emerald-400/20
                 hover:border-emerald-400/40
@@ -193,38 +194,22 @@ SidebarComponent px-3 md:px-4 py-2 md:py-3 text-white"
                 </button>
 
                 {/* Profile Dropdown */}
-                {profileMenuAnchor && (
-                  <div className="absolute right-0 mt-2 z-10 w-48 bg-white rounded-lg shadow-lg py-1 text-gray-700">
-                    {isSignedIn ? (
-                      <>
-                        <a
-                          onClick={() => navigate("/profile")} // Navigate to profile page
-                          className="block px-4 py-2 text-sm hover:bg-gray-100 cursor-pointer"
-                        >
-                          Profile
-                        </a>
-                        <button
-                          onClick={handleLogout}
-                          className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
-                        >
-                          Logout
-                        </button>
-                        <a
-                          onClick={() => navigate("/sellerForm")} // Open the modal
-                          className="block px-4 py-2 text-sm hover:bg-gray-100 cursor-pointer"
-                        >
-                          Become a Seller
-                        </a>
-                      </>
-                    ) : (
+                {isSignedIn ? (
+                  <ProfileDrawer 
+                    isOpen={isDrawerOpen} 
+                    onClose={() => setIsDrawerOpen(false)}
+                  />
+                ) : (
+                  isDrawerOpen && (
+                    <div className="absolute right-0 mt-2 z-10 w-48 bg-white rounded-lg shadow-lg py-1 text-gray-700">
                       <a
                         href="/login"
                         className="block px-4 py-2 text-sm hover:bg-gray-100"
                       >
                         Login
                       </a>
-                    )}
-                  </div>
+                    </div>
+                  )
                 )}
               </div>
             </div>

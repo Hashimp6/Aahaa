@@ -183,8 +183,8 @@ const RightSideComponent = () => {
         <div key={story.id || `story-${story._id}`} className="flex-shrink-0">
                 <div className="w-28 h-28 rounded-lg overflow-hidden ring-2 ring-[#049b83] p-0.5 bg-white relative">
                   <img
-                    src={story.image}
-                    alt={story.title}
+                    src={story.media}
+                    alt="hello"
                     className="w-full h-full object-cover rounded-lg"
                   />
                   <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-1.5">

@@ -11,7 +11,7 @@ import AddProduct from "../components/AddProduct";
 const Checking = () => {
   return (
     <div className="flex h-screen bg-gray-100">
-    <AddProduct/>
+    <AddCategoryModal/>
     </div>
   );
 };

@@ -12,7 +12,7 @@ const app = express();
 
 // Middleware
 app.use(express.json()); // Parse JSON requests
-app.use('/api/auth', authRouter);
+app.use('/auth', authRouter);
 app.use('/api/sellers', sellerRoutes);
 app.use('/api/search', searchRoutes);
 app.use('/api/category', categoryRouter);

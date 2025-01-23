@@ -10,27 +10,28 @@ import LocationSelector from "../components/LocationModel";
 function HomePage() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  
+
   // Get user from Redux store
   const user = useSelector((state) => state.auth.user);
-  
+
   // Only check location on first login
   const shouldShowLocationSelector = () => {
     // Check if user has never set location before
     const hasNeverSetLocation = !localStorage.getItem("locationSet");
-    
+
     // Check if coordinates are invalid
-    const hasInvalidCoordinates = 
+    const hasInvalidCoordinates =
       !user?.location?.coordinates ||
-      (user.location.coordinates[0] === 0 && user.location.coordinates[1] === 0);
-    
+      (user.location.coordinates[0] === 0 &&
+        user.location.coordinates[1] === 0);
+
     return hasNeverSetLocation && hasInvalidCoordinates;
   };
 
   useEffect(() => {
     const token = localStorage.getItem("token");
     const storedUser = localStorage.getItem("user");
-    
+
     if (token && storedUser) {
       const parsedUser = JSON.parse(storedUser);
       dispatch(login({ user: parsedUser, token }));
@@ -63,14 +64,14 @@ function HomePage() {
   // Main content
   return (
     <div className="fixed w-full h-screen flex flex-col">
-      <NavComponent />
-      <div className="flex flex-1 overflow-hidden">
-        <SidebarComponent />
-        <div className="w-full p-2 z-0 overflow-y-auto">
-          <SellerList />
-        </div>
-      </div>
+  <NavComponent className="z-40" /> {/* Add z-index to nav */}
+  <div className="flex flex-1 overflow-hidden relative"> {/* Added relative */}
+    <SidebarComponent />
+    <div className="w-full p-2 overflow-y-auto pb-16 md:pb-2 z-0"> {/* Explicit z-0 */}
+      <SellerList />
     </div>
+  </div>
+</div>
   );
 }
 

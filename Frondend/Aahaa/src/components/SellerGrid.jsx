@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { Store, MapPin, Star, ArrowRight } from "lucide-react";
 import axios from "axios";
@@ -10,6 +10,7 @@ const SellerGrid = () => {
   const dispatch = useDispatch();
   const user = useSelector((state) => state.auth.user);
   const location = user.location.coordinates;
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (location) {
@@ -33,6 +34,12 @@ const SellerGrid = () => {
     }
   }, [categoryName, location]);
 
+  const handleClick = (seller) => {
+    navigate(`/seller-profile/${seller._id}`, {
+      state: { sellerData: seller },
+    });
+  };
+
   if (!sellers || sellers.length === 0) {
     return (
       <div className="w-full min-h-[60vh] bg-gradient-to-br from-white to-gray-50 rounded-xl flex justify-center items-center p-8">
@@ -52,6 +59,7 @@ const SellerGrid = () => {
         {sellers.map((seller) => (
           <div
             key={seller._id}
+            onClick={() => handleClick(seller)}
             className="group relative bg-white rounded-2xl overflow-hidden cursor-pointer transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl border border-gray-100"
           >
             {/* Gradient Overlay */}
