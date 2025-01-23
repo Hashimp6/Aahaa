@@ -7,7 +7,7 @@ import { login } from "../redux/slices/authSlice"; // Import login action from t
 
 function LoginPage() {
   // State for form fields
-  const API_URL = process.env.REACT_APP_API_URL; 
+  const API_URL = import.meta.env.VITE_API_BASE_URL;
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     email: "",

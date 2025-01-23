@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { updateUserDetails } from "../redux/slices/authSlice"; // Adjust the path
 
 const LocationSelector = ({ onClose }) => {
-  const API_URL = process.env.REACT_APP_API_URL; 
+  const API_URL = import.meta.env.VITE_API_BASE_URL;
   const [searchValue, setSearchValue] = useState("");
   const [mapCenter, setMapCenter] = useState({ lat: 51.5074, lng: -0.1278 });
   const [markerPosition, setMarkerPosition] = useState(null);

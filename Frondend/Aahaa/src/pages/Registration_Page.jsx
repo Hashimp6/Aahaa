@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom"; // For navigation to Login page
 import axios from "axios";
 
 function RegistrationPage() {
-  const API_URL = process.env.REACT_APP_API_URL; 
+  const API_URL = import.meta.env.VITE_API_BASE_URL;
   // State for form fields
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({

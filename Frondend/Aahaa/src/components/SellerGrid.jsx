@@ -5,7 +5,7 @@ import { Store, MapPin, Star, ArrowRight } from "lucide-react";
 import axios from "axios";
 
 const SellerGrid = () => {
-  const API_URL = process.env.REACT_APP_API_URL; 
+  const API_URL = import.meta.env.VITE_API_BASE_URL;
   const { categoryName } = useParams();
   const [sellers, setSellers] = useState([]);
   const dispatch = useDispatch();

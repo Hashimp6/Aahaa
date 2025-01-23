@@ -15,7 +15,7 @@ import axios from "axios";
 import { useSelector } from "react-redux";
 
 const AddProduct = () => {
-  const API_URL = process.env.REACT_APP_API_URL; 
+  const API_URL = import.meta.env.VITE_API_BASE_URL; 
   const navigate = useNavigate();
   const sellerData = useSelector((state) => state.seller.sellerData);
   const sellerId = sellerData._id;

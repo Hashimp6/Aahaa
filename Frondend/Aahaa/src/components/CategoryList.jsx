@@ -6,7 +6,7 @@ import { setCategories } from "../redux/slices/categorySlice";
 import { useNavigate } from "react-router-dom";
 
 const CategoryGrid = () => {
-  const API_URL = process.env.REACT_APP_API_URL; 
+  const API_URL = import.meta.env.VITE_API_BASE_URL; 
   const [loading, setLoading] = useState(true);
   const categories = useSelector((state) => state.category.categories);
   const dispatch = useDispatch();

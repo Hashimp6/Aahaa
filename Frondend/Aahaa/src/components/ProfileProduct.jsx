@@ -26,7 +26,7 @@ const Modal = ({ isOpen, onClose, children }) => {
 };
 
 const ProductsGrid = () => {
-    const API_URL = process.env.REACT_APP_API_URL; 
+    const API_URL = import.meta.env.VITE_API_BASE_URL;
   const [products, setProducts] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);

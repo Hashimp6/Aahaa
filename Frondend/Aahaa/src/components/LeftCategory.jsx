@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { setCategories } from "../redux/slices/categorySlice"; // Adjust the path if needed
 
 const CategoryList = () => {
-  const API_URL = process.env.REACT_APP_API_URL; 
+  const API_URL = import.meta.env.VITE_API_BASE_URL; 
   const [loading, setLoading] = useState(true); // Loading state
   const categories = useSelector((state) => state.category.categories); // Access categories from Redux
   const dispatch = useDispatch(); // Dispatch function to update Redux store

@@ -10,7 +10,7 @@ import {
 } from "../redux/slices/listOfSellers";
 
 const SellerList = () => {
-  const API_URL = process.env.REACT_APP_API_URL; 
+  const API_URL = import.meta.env.VITE_API_BASE_URL;
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const user = useSelector((state) => state.auth.user);

@@ -11,7 +11,7 @@ import {
 import CameraAltIcon from "@mui/icons-material/CameraAlt";
 
 const AddCategoryModal = ({ onClose }) => {
-  const API_URL = process.env.REACT_APP_API_URL; 
+  const API_URL = import.meta.env.VITE_API_BASE_URL;
   const [name, setName] = useState("");
   const [colorCode, setColorCode] = useState("");
   const [image, setImage] = useState(null);

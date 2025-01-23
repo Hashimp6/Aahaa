@@ -45,7 +45,7 @@ const Snackbar = ({ message, type, onClose }) => {
 };
 
 const RightSideComponent = () => {
-  const API_URL = process.env.REACT_APP_API_URL; 
+  const API_URL = import.meta.env.VITE_API_BASE_URL;
   const [activeTab, setActiveTab] = useState("posts");
   const [open, setOpen] = useState(false);
   const [storyModalOpen, setStoryModalOpen] = useState(false);
