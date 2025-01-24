@@ -22,21 +22,16 @@ function App() {
   return (
     <Router>
       <Routes>
-        {/* Guest-only routes (redirect to home if logged in) */}
         <Route
           path="/register"
           element={
-            <GuestRoute>
               <RegistrationPage />
-            </GuestRoute>
           }
         />
         <Route
           path="/login"
           element={
-            <GuestRoute>
               <LoginPage />
-            </GuestRoute>
           }
         />
 
@@ -44,9 +39,7 @@ function App() {
         <Route
           path="/home"
           element={
-            <ProtectedRoute>
               <HomePage />
-            </ProtectedRoute>
           }
         />
         <Route
@@ -95,9 +88,9 @@ function App() {
         <Route
           path="/"
           element={
-            <ProtectedRoute>
+            
               <Navigate to="/home" replace />
-            </ProtectedRoute>
+          
           }
         />
       </Routes>

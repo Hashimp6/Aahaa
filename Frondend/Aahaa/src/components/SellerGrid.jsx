@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { Store, MapPin, Star, ArrowRight } from "lucide-react";
 import axios from "axios";
 
@@ -8,38 +8,70 @@ const SellerGrid = () => {
   const API_URL = import.meta.env.VITE_API_BASE_URL;
   const { categoryName } = useParams();
   const [sellers, setSellers] = useState([]);
-  const dispatch = useDispatch();
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+
   const user = useSelector((state) => state.auth.user);
-  const location = user.location.coordinates;
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (location) {
-      const fetchSellers = async () => {
-        try {
-          const [latitude, longitude] = location;
-          const response = await axios.get(`${API_URL}/search/sellers-by-category`, {
+    const fetchSellers = async () => {
+      setIsLoading(true);
+      try {
+        // Fallback to default coordinates if user location not available
+        const defaultCoordinates = [0, 0]; // Replace with your default location
+        const coordinates = user?.location?.coordinates || defaultCoordinates;
+
+        const [latitude, longitude] = coordinates;
+
+        const response = await axios.get(
+          `${API_URL}/search/sellers-by-category`,
+          {
             params: {
               latitude,
               longitude,
               category: categoryName,
             },
-          });
-          setSellers(response.data.sellers || []);
-        } catch (error) {
-          console.error("Error fetching sellers:", error);
-          setSellers([]);
-        }
-      };
-      fetchSellers();
-    }
-  }, [categoryName, location]);
+          }
+        );
+
+        setSellers(response.data.sellers || []);
+        setError(null);
+      } catch (error) {
+        console.error("Error fetching sellers:", error);
+        setSellers([]);
+        setError(error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchSellers();
+  }, [categoryName, user]);
 
   const handleClick = (seller) => {
     navigate(`/seller-profile/${seller._id}`, {
       state: { sellerData: seller },
     });
   };
+
+  if (isLoading) {
+    return (
+      <div className="w-full min-h-[60vh] flex justify-center items-center">
+        <p>Loading sellers...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="w-full min-h-[60vh] bg-red-50 flex justify-center items-center">
+        <p className="text-red-600">
+          Failed to load sellers. Please try again.
+        </p>
+      </div>
+    );
+  }
 
   if (!sellers || sellers.length === 0) {
     return (
@@ -55,8 +87,8 @@ const SellerGrid = () => {
   }
 
   return (
-    <div className="w-full min-h-screen bg-gradient-to-br from-white to-gray-50 p-2">
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+    <div className="w-full h-screen overflow-y-auto bg-gray-100">
+      <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-5 xl:grid-cols-6 gap-2">
         {sellers.map((seller) => (
           <div
             key={seller._id}

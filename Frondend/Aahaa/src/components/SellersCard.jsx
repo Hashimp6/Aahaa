@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate,  } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { Star, Store, MapPin, ArrowRight, ChevronDown } from "lucide-react";
 import {
@@ -54,8 +54,6 @@ const SellerList = () => {
     }
   };
 
- 
-
   if (!user?.location?.coordinates || user.location.coordinates.length !== 2) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
@@ -87,8 +85,8 @@ const SellerList = () => {
   }
 
   return (
-    <div className=" bg-gray-100 p-6">
-      <ul className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6">
+    <div className=" bg-gray-100 ">
+      <ul className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-5">
         {nearestSellers.map((seller) => (
           <li
             key={seller._id}
@@ -140,9 +138,7 @@ const SellerList = () => {
                       size={14}
                       className="text-gray-400 group-hover:text-gray-500 transition-colors duration-300"
                     />
-                    <span className="truncate">
-                      {seller.place}
-                    </span>
+                    <span className="truncate">{seller.place}</span>
                   </div>
                 </div>
               </div>

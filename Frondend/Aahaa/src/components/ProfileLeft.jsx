@@ -35,11 +35,11 @@ const LeftSideComponent = () => {
     <div className="flex flex-col bg-white shadow-lg rounded-xl p-6 h-full">
       {/* Header with Profile */}
       <div className="relative mb-6">
-        <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-r from-teal-500 to-teal-600 rounded-t-xl -mx-6 -mt-6" />
+        <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-r from-teal-500 to-teal-600  -mx-6 -mt-6" />
         
         <div className="relative flex flex-col items-center">
           <img
-            src="../../public/puffs.png"
+            src={sellerData.profileImage}
             alt="Profile"
             className="rounded-full w-28 h-28 border-4 border-white shadow-md object-cover mt-4"
           />

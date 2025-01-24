@@ -53,7 +53,7 @@ const SidebarComponent = () => {
       </div>
 
       {/* Mobile Bottom Navigation */}
-      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-gradient-to-r from-[#049b83]/90 via-black/90 to-[#049b83]/90 p-2 z-50">
+      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-gradient-to-r from-[#049b83]/90 via-black/90 to-[#049b83]/90 z-50">
         <div className="flex justify-around items-center overflow-x-hidden">
           {menuItems.map((item) => {
             const Icon = item.icon;

@@ -93,13 +93,7 @@ const ProfileDrawer = ({ isOpen, onClose }) => {
             </button>
           </li>
           <li>
-            <button
-              onClick={() => {
-                navigate("/orders");
-                onClose();
-              }}
-              className="w-full p-3 flex items-center justify-between rounded-lg hover:bg-teal-50 text-gray-700 group"
-            >
+            <button className="w-full p-3 flex items-center justify-between rounded-lg hover:bg-teal-50 text-gray-700 group">
               <div className="flex items-center space-x-3">
                 <Package className="text-[#119a6f]" size={20} />
                 <span>My Orders</span>
@@ -111,13 +105,7 @@ const ProfileDrawer = ({ isOpen, onClose }) => {
             </button>
           </li>
           <li>
-            <button
-              onClick={() => {
-                navigate("/settings");
-                onClose();
-              }}
-              className="w-full p-3 flex items-center justify-between rounded-lg hover:bg-teal-50 text-gray-700 group"
-            >
+            <button className="w-full p-3  flex items-center justify-between rounded-lg hover:bg-teal-50 text-gray-700 group">
               <div className="flex items-center space-x-3">
                 <Settings className="text-[#119a6f]" size={20} />
                 <span>Settings</span>
@@ -127,19 +115,19 @@ const ProfileDrawer = ({ isOpen, onClose }) => {
                 size={16}
               />
             </button>
+            <button
+              onClick={handleLogout}
+              className="w-full py-8 text-center bg-gray-200 rounded-md
+               text-[#119a6f] hover:text-[#0d805c] font-medium"
+            >
+              Sign Out
+            </button>
           </li>
         </ul>
       </nav>
 
       {/* Footer */}
-      <div className="absolute bottom-0 w-full p-4 border-t">
-        <button
-          onClick={handleLogout}
-          className="w-full py-2 text-center text-[#119a6f] hover:text-[#0d805c] font-medium"
-        >
-          Sign Out
-        </button>
-      </div>
+      <div className="absolute bottom-0 w-full p-4 border-t"></div>
     </div>
   );
 };

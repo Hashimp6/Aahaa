@@ -44,7 +44,7 @@ const Snackbar = ({ message, type, onClose }) => {
   );
 };
 
-const RightSideComponent = () => {
+const RightSideComponent = ({ isMobile = false }) => {
   const API_URL = import.meta.env.VITE_API_BASE_URL;
   const [activeTab, setActiveTab] = useState("posts");
   const [open, setOpen] = useState(false);
@@ -129,7 +129,7 @@ const RightSideComponent = () => {
   const handleDeleteStory = async (storyId) => {
     try {
       await axios.delete(`${API_URL}/stories/${storyId}`);
-      setStories((prevStories) => 
+      setStories((prevStories) =>
         prevStories.filter((story) => story.id !== storyId)
       );
       showSnackbar("Story deleted successfully!");
@@ -156,17 +156,10 @@ const RightSideComponent = () => {
     }
   };
 
- 
-
-
-
   return (
-    <div className="max-w-7xl mx-auto px-4">
+    <div className={`${isMobile ? "px-0" : "max-w-7xl mx-auto px-4"}`}>
       {/* Stories Section */}
-      <div className="relative mb-6">
-        <div className="flex items-center justify-between mb-3">
-          <h2 className="text-base font-semibold text-gray-800">Offers</h2>
-        </div>
+      <div className="relative ">
         <div className="overflow-x-auto scrollbar-hide">
           <div className="flex space-x-3 py-2">
             {/* Add Story Card */}
@@ -181,7 +174,10 @@ const RightSideComponent = () => {
             </div>
             {/* Existing Stories */}
             {stories.map((story) => (
-        <div key={story.id || `story-${story._id}`} className="flex-shrink-0">
+              <div
+                key={story.id || `story-${story._id}`}
+                className="flex-shrink-0"
+              >
                 <div className="w-28 h-28 rounded-lg overflow-hidden ring-2 ring-[#049b83] p-0.5 bg-white relative">
                   <img
                     src={story.media}
@@ -189,8 +185,12 @@ const RightSideComponent = () => {
                     className="w-full h-full object-cover rounded-lg"
                   />
                   <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-1.5">
-                    <p className="text-white text-sm truncate">{story.username}</p>
-                    <p className="text-white/80 text-xs truncate">{story.title}</p>
+                    <p className="text-white text-sm truncate">
+                      {story.username}
+                    </p>
+                    <p className="text-white/80 text-xs truncate">
+                      {story.title}
+                    </p>
                     <button
                       onClick={() => handleDeleteStory(story.id)}
                       className="absolute top-2 right-2 text-white hover:text-red-500 transition-colors"
@@ -234,16 +234,20 @@ const RightSideComponent = () => {
       {/* Posts Grid */}
       {activeTab === "posts" && (
         <>
-          <div className="flex justify-end">
+          <div className="flex justify-end mb-2">
             <button
               onClick={handleOpen}
               className="px-6 py-2.5 bg-[#049b83] hover:bg-[#038671] text-white rounded-lg shadow-lg transform transition-all duration-300 hover:scale-105 flex items-center gap-2 font-medium"
             >
-              <PlusCircle className="w-5 h-5" />
+              <PlusCircle className="w-5 h-5 " />
               Create New Post
             </button>
           </div>
-          <div className="grid grid-cols-2 mt-2 sm:grid-cols-2 md:grid-cols-5 gap-4">
+          <div
+            className={`grid ${
+              isMobile ? "grid-cols-2" : "grid-cols-2 md:grid-cols-5"
+            } gap-4`}
+          >
             {posts.map((post) => (
               <div
                 key={post._id}
@@ -284,31 +288,28 @@ const RightSideComponent = () => {
       )}
 
       {/* Products Grid */}
-      {activeTab === "products" && (
-  <ProductsGrid/>
-)}
-       
+      {activeTab === "products" && <ProductsGrid />}
 
-       <Dialog 
-                open={storyModalOpen} 
-                onClose={handleStoryModalClose}
-                fullWidth 
-                maxWidth="sm"
-            >
-                <DialogTitle className="text-[#049b83]">Create New Story</DialogTitle>
-                <DialogContent>
-                    <CreateStory 
-                        onSuccess={handleStorySuccess}
-                        onClose={handleStoryModalClose}
-                        showSnackbar={(message, type) => console.log(message, type)} 
-                    />
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={handleStoryModalClose} style={{ color: '#049b83' }}>
-                        Cancel
-                    </Button>
-                </DialogActions>
-            </Dialog>
+      <Dialog
+        open={storyModalOpen}
+        onClose={handleStoryModalClose}
+        fullWidth
+        maxWidth="sm"
+      >
+        <DialogTitle className="text-[#049b83]">Create New Story</DialogTitle>
+        <DialogContent>
+          <CreateStory
+            onSuccess={handleStorySuccess}
+            onClose={handleStoryModalClose}
+            showSnackbar={(message, type) => console.log(message, type)}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleStoryModalClose} style={{ color: "#049b83" }}>
+            Cancel
+          </Button>
+        </DialogActions>
+      </Dialog>
       <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
         <DialogTitle>Create New Post</DialogTitle>
         <DialogContent>

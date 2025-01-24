@@ -5,7 +5,6 @@ import {
   Call,
   Email,
   Settings,
-  AddPhotoAlternate,
 } from "@mui/icons-material";
 import { useLocation, useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
@@ -16,193 +15,296 @@ const SellerProfile = () => {
   const { id } = useParams();
   const location = useLocation();
   const { sellerData } = location.state || {};
-  const sellerDetails = useSelector((state) => state.seller.sellerData);
-  const sellerId = sellerDetails._id;
   const [posts, setPosts] = useState([]);
   const [activeTab, setActiveTab] = useState("posts");
-  useEffect(() => {
-    fetchPosts();
-  }, [sellerId]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const fetchPosts = async () => {
-    try {
-      const response = await axios.get(`${API_URL}/post/seller/${id}`);
-      setPosts(response.data);
-    } catch (error) {
-      console.error("Error fetching posts:", error);
-      showSnackbar(
-        error.response?.data?.message || "Error fetching posts",
-        "error"
-      );
-      setLoading(false);
+  useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        setLoading(true);
+        const response = await axios.get(`${API_URL}/post/seller/${id}`);
+        setPosts(response.data);
+        setLoading(false);
+      } catch (error) {
+        console.error("Error fetching posts:", error);
+        setError(error.response?.data?.message || "Error fetching posts");
+        setLoading(false);
+      }
+    };
+
+    if (id) {
+      fetchPosts();
     }
-  };
-  // Dummy stories data (replace with actual data)
+  }, [id, API_URL]);
+
   const stories = [
     {
       id: 1,
-      image: "../../public/puffs.png",
+      image: "/puffs.png",
       username: "John Doe",
       title: "Exciting Announcement!",
     },
     {
       id: 2,
-      image: "../../public/puffs.png",
+      image: "/puffs.png",
       username: "Jane Smith",
       title: "New Product Launch!",
     },
     {
       id: 3,
-      image: "../../public/puffs.png",
+      image: "/puffs.png",
       username: "Alice Cooper",
       title: "Seasonal Sale!",
     },
   ];
 
-  if (!sellerData) {
-    return <p>Loading...</p>;
-  }
-
-  console.log("seller data in component", sellerData);
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error: {error}</p>;
+  if (!sellerData) return <p>No seller data available</p>;
 
   return (
-    <div className="flex  w-screen bg-gray-100 overflow-hidden">
-      {/* Left Side - Fixed Profile Section */}
-      <div className="w-1/4 border-r border-gray-300 bg-white p-5 flex flex-col items-center">
-        <img
-          src={sellerData.profileImage}
-          alt="Profile"
-          className="rounded-full w-32 h-32 border-4 border-gray-300 mb-6"
+    <div className=" bg-gray-100">
+      {/* Mobile Layout */}
+      <div className="md:hidden">
+        <MobileSellerProfileLayout
+          sellerData={sellerData}
+          posts={posts}
+          stories={stories}
         />
-        <div className="text-center mb-8">
-          <h1 className="text-2xl font-bold">{sellerData.companyName}</h1>
-          <p className="text-lg text-gray-600">{sellerData.category}</p>
-          <p className="text-sm text-gray-500">{sellerData.description}</p>
-        </div>
-
-        {/* Contact Links */}
-        <div className="flex flex-col gap-4 w-full">
-          <a
-            href={sellerData.contact.instagram}
-            className="text-white bg-gradient-to-r from-pink-500 to-yellow-500 px-4 py-2 rounded-lg flex items-center gap-2 w-full justify-center"
-          >
-            <Instagram /> Instagram
-          </a>
-          <a
-            href={`https://wa.me/${sellerData.contact.whatsapp}`}
-            className="text-white bg-green-500 px-4 py-2 rounded-lg flex items-center gap-2 w-full justify-center"
-          >
-            <WhatsApp /> WhatsApp
-          </a>
-          <a
-            href={`tel:${sellerData.contact.phone}`}
-            className="text-white bg-blue-500 px-4 py-2 rounded-lg flex items-center gap-2 w-full justify-center"
-          >
-            <Call /> Call
-          </a>
-          <a
-            href={`mailto:${sellerData.contact.email}`}
-            className="text-white bg-red-500 px-4 py-2 rounded-lg flex items-center gap-2 w-full justify-center"
-          >
-            <Email /> Email
-          </a>
-        </div>
-
-        {/* Settings and Add Post Buttons */}
-        <div className="flex justify-between mt-6 w-full"></div>
       </div>
 
-      {/* Right Side - Scrollable Section for Posts and Products */}
-      <div className="w-3/4 p-4 overflow-y-auto bg-white">
-        {/* Stories Section */}
-        <div className=" overflow-x-auto pl-2 scrollbar-hide">
-          <div className="flex space-x-4 py-4">
-            {stories.map((story) => (
-              <div key={story.id} className="flex-shrink-0">
-                <div className="w-32 h-32 rounded-lg overflow-hidden ring-2 ring-purple-500 p-0.5 bg-white relative">
-                  <img
-                    src={story.image}
-                    alt={story.title}
-                    className="w-full h-full object-cover rounded-lg"
-                  />
-                  <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-2">
-                    <p className="text-white text-sm truncate">
-                      {story.username}
-                    </p>
-                    <p className="text-white/80 text-xs truncate">
-                      {story.title}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            ))}
+      {/* Desktop Layout */}
+      <div className="hidden md:flex w-screen overflow-hidden">
+        {/* Left Side - Profile Section */}
+        <div className="w-1/4 border-r border-gray-300 bg-white p-5 flex flex-col items-center">
+          <img
+            src={sellerData.profileImage}
+            alt="Profile"
+            className="rounded-full w-32 h-32 border-4 border-gray-300 mb-6"
+          />
+          <div className="text-center mb-8">
+            <h1 className="text-2xl font-bold">{sellerData.companyName}</h1>
+            <p className="text-lg text-gray-600">{sellerData.category}</p>
+            <p className="text-sm text-gray-500">{sellerData.description}</p>
+          </div>
+
+          {/* Contact Links */}
+          <div className="flex flex-col gap-4 w-full">
+            {renderContactLink(
+              sellerData.contact.instagram,
+              <Instagram />,
+              "Instagram",
+              "bg-gradient-to-r from-pink-500 to-yellow-500"
+            )}
+            {renderContactLink(
+              `https://wa.me/${sellerData.contact.whatsapp}`,
+              <WhatsApp />,
+              "WhatsApp",
+              "bg-green-500"
+            )}
+            {renderContactLink(
+              `tel:${sellerData.contact.phone}`,
+              <Call />,
+              "Call",
+              "bg-blue-500"
+            )}
+            {renderContactLink(
+              `mailto:${sellerData.contact.email}`,
+              <Email />,
+              "Email",
+              "bg-red-500"
+            )}
           </div>
         </div>
 
-        {/* Tabs */}
-        <div className="flex space-x-4 border-b mb-6">
-          <button
-            onClick={() => setActiveTab("posts")}
-            className={`${
-              activeTab === "posts"
-                ? "text-purple-600 border-b-2 border-purple-600"
-                : "text-gray-500"
-            } px-4 py-2`}
-          >
-            Posts
-          </button>
-          <button
-            onClick={() => setActiveTab("products")}
-            className={`${
-              activeTab === "products"
-                ? "text-purple-600 border-b-2 border-purple-600"
-                : "text-gray-500"
-            } px-4 py-2`}
-          >
-            Products
-          </button>
-        </div>
+        {/* Right Side - Scrollable Section */}
+        <div className="w-3/4 p-4 overflow-y-auto bg-white">
+          {/* Stories Section */}
+          <StoriesSection stories={stories} />
 
-        {/* Posts Section */}
+          {/* Tabs */}
+          <TabSection activeTab={activeTab} setActiveTab={setActiveTab} />
+
+          {/* Content Section */}
+          <ContentSection
+            activeTab={activeTab}
+            posts={posts}
+            products={sellerData.products}
+          />
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const renderContactLink = (href, icon, text, bgClass) => (
+  <a
+    href={href}
+    target="_blank"
+    rel="noopener noreferrer"
+    className={`text-white ${bgClass} px-4 py-2 rounded-lg flex items-center gap-2 w-full justify-center`}
+  >
+    {icon} {text}
+  </a>
+);
+
+const StoriesSection = ({ stories }) => (
+  <div className="overflow-x-auto pl-2 scrollbar-hide">
+    <div className="flex space-x-4 py-4">
+      {stories.map((story) => (
+        <div key={story.id} className="flex-shrink-0">
+          <div className="w-32 h-32 rounded-lg overflow-hidden ring-2 ring-purple-500 p-0.5 bg-white relative">
+            <img
+              src={story.image}
+              alt={story.title}
+              className="w-full h-full object-cover rounded-lg"
+            />
+            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-2">
+              <p className="text-white text-sm truncate">{story.username}</p>
+              <p className="text-white/80 text-xs truncate">{story.title}</p>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+);
+
+const TabSection = ({ activeTab, setActiveTab }) => (
+  <div className="flex space-x-4 border-b mb-6">
+    {["posts", "products"].map((tab) => (
+      <button
+        key={tab}
+        onClick={() => setActiveTab(tab)}
+        className={`${
+          activeTab === tab
+            ? "text-purple-600 border-b-2 border-purple-600"
+            : "text-gray-500"
+        } px-4 py-2 capitalize`}
+      >
+        {tab}
+      </button>
+    ))}
+  </div>
+);
+
+const ContentSection = ({ activeTab, posts, products }) => {
+  const renderGrid = (items, type) => (
+    <div
+      className={`grid ${
+        type === "posts" ? "grid-cols-5" : "grid-cols-2"
+      } gap-4`}
+    >
+      {items.length > 0 ? (
+        items.map((item, index) => (
+          <div key={index} className="bg-white p-4 rounded-lg shadow-md">
+            <img
+              src={type === "posts" ? item.media : item.image}
+              alt={type === "posts" ? "Post" : item.name}
+              className="w-full h-40 object-cover rounded-lg"
+            />
+            <p className="mt-2 text-sm text-gray-600">
+              {type === "posts" ? item.description : item.description}
+            </p>
+          </div>
+        ))
+      ) : (
+        <p>No {type} available.</p>
+      )}
+    </div>
+  );
+
+  return (
+    <div>
+      {activeTab === "posts" && renderGrid(posts, "posts")}
+      {activeTab === "products" && renderGrid(products, "products")}
+    </div>
+  );
+};
+
+const MobileSellerProfileLayout = ({ sellerData, posts, stories }) => {
+  const [activeTab, setActiveTab] = useState("posts");
+
+  return (
+    <div className="bg-white">
+      {/* Mobile Profile Header */}
+      <div className="flex items-center justify-between p-4">
+        <div className="flex items-center space-x-4">
+          <img
+            src={sellerData.profileImage}
+            alt="Profile"
+            className="w-16 h-16 rounded-full object-cover"
+          />
+          <div>
+            <h1 className="text-xl font-bold">{sellerData.companyName}</h1>
+            <p className="text-sm text-gray-600">{sellerData.category}</p>
+          </div>
+        </div>
+        <button
+          className="p-2 bg-gray-100 rounded-full"
+          onClick={() => {
+            /* Edit Profile Action */
+          }}
+        >
+          <Settings />
+        </button>
+      </div>
+
+      {/* Social Media Links */}
+      <div className="flex justify-around p-4 border-b">
+        {[
+          { link: sellerData.contact.instagram, icon: <Instagram /> },
+          {
+            link: `https://wa.me/${sellerData.contact.whatsapp}`,
+            icon: <WhatsApp />,
+          },
+          { link: `tel:${sellerData.contact.phone}`, icon: <Call /> },
+          { link: `mailto:${sellerData.contact.email}`, icon: <Email /> },
+        ].map(({ link, icon }, index) => (
+          <a key={index} href={link} target="_blank" rel="noopener noreferrer">
+            {icon}
+          </a>
+        ))}
+      </div>
+
+      {/* Stories Section */}
+      <StoriesSection stories={stories} />
+
+      {/* Tabs */}
+      <TabSection activeTab={activeTab} setActiveTab={setActiveTab} />
+
+      {/* Content Section */}
+      <div className="p-4">
         {activeTab === "posts" && (
-          <div className="grid grid-cols-5 gap-4">
-            {posts.length > 0 ? (
-              posts.map((post, index) => (
-                <div key={index} className="bg-white p-4 rounded-lg shadow-md">
-                  <img
-                    src={post.media}
-                    alt="Post"
-                    className="w-full h-40 object-cover rounded-lg"
-                  />
-                  <p className="mt-2 text-sm text-gray-600">
-                    {post.description}
-                  </p>
-                </div>
-              ))
-            ) : (
-              <p>No posts available.</p>
-            )}
+          <div className="grid grid-cols-3 gap-2">
+            {posts.map((post) => (
+              <img
+                key={post._id}
+                src={post.media}
+                alt="Post"
+                className="w-full aspect-square object-cover"
+              />
+            ))}
           </div>
         )}
 
-        {/* Products Section */}
         {activeTab === "products" && (
           <div className="grid grid-cols-2 gap-4">
-            {sellerData.products.length > 0 ? (
-              sellerData.products.map((product, index) => (
-                <div key={index} className="bg-white p-4 rounded-lg shadow-md">
-                  <img
-                    src={product.image}
-                    alt="Product"
-                    className="w-full h-40 object-cover rounded-lg"
-                  />
-                  <p className="mt-2 text-lg font-semibold">{product.name}</p>
+            {sellerData.products.map((product) => (
+              <div key={product._id} className="bg-white rounded-lg shadow-md">
+                <img
+                  src={product.image}
+                  alt={product.name}
+                  className="w-full h-40 object-cover rounded-t-lg"
+                />
+                <div className="p-2">
+                  <h3 className="font-semibold">{product.name}</h3>
                   <p className="text-sm text-gray-600">{product.description}</p>
                 </div>
-              ))
-            ) : (
-              <p>No products available.</p>
-            )}
+              </div>
+            ))}
           </div>
         )}
       </div>
