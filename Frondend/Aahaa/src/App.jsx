@@ -22,6 +22,14 @@ function App() {
   return (
     <Router>
       <Routes>
+      <Route
+          path="/"
+          element={
+            
+              <Navigate to="/home" replace />
+          
+          }
+        />
         <Route
           path="/register"
           element={
@@ -85,14 +93,7 @@ function App() {
         />
 
         {/* Root route */}
-        <Route
-          path="/"
-          element={
-            
-              <Navigate to="/home" replace />
-          
-          }
-        />
+       
       </Routes>
     </Router>
   );
