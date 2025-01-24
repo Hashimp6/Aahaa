@@ -62,10 +62,10 @@ const getStoriesByUser = async (req, res) => {
 // Delete a story
 const deleteStories = async (req, res) => {
     try {
-        const { postId } = req.params;
-
+        const { storyId } = req.params;
+  console.log("story id is",storyId );
         // Find the story in the database
-        const story = await Stories.findById(postId);
+        const story = await Stories.findById(storyId);
         if (!story) {
             return res.status(404).json({ message: "Story not found!" });
         }
@@ -73,20 +73,36 @@ const deleteStories = async (req, res) => {
         // Extract public_id from Cloudinary URL
         const publicId = story.media.split('/').slice(-2).join('/').split('.')[0];
 
-        // Delete media from Cloudinary
-        const cloudinaryResult = await cloudinary.uploader.destroy(`posts/${publicId}`);
-        if (cloudinaryResult.result !== "ok") {
-            return res.status(500).json({ message: "Failed to delete image from Cloudinary." });
+        try {
+            // Delete image from Cloudinary
+            const result = await cloudinary.uploader.destroy(publicId);
+            
+            if (result.result !== "ok") {
+                console.error("Cloudinary deletion failed:", result);
+                return res.status(500).json({ 
+                    message: "Failed to delete image from Cloudinary.",
+                    details: result
+                });
+            }
+        } catch (cloudinaryError) {
+            console.error("Cloudinary error:", cloudinaryError);
+            // Continue with post deletion even if Cloudinary deletion fails
         }
-
-        // Delete the story from the database
-        await Stories.findByIdAndDelete(postId);
-
-        res.status(200).json({ message: "Story deleted successfully!" });
-    } catch (error) {
-        console.error("Error deleting story:", error);
-        res.status(500).json({ message: "Failed to delete story", error: error.message });
-    }
+         // Delete the post from database
+         await Stories.findByIdAndDelete(storyId);
+        
+         res.status(200).json({ 
+             message: "Post deleted successfully!",
+             storyId:storyId
+         });
+ 
+     } catch (error) {
+         console.error("Error deleting post:", error);
+         res.status(500).json({ 
+             message: "Failed to delete post",
+             error: error.message 
+         });
 };
+}
 
 module.exports = { createStories, getStoriesByUser, deleteStories };

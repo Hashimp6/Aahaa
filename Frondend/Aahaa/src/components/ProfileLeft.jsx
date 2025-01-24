@@ -3,13 +3,13 @@ import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import {
   Instagram,
-  MessageSquare,
   Phone,
   Mail,
   Settings,
   LogOut,
-  ClipboardList
+  ClipboardList,
 } from "lucide-react";
+import { WhatsApp } from "@mui/icons-material";
 
 const LeftSideComponent = () => {
   const navigate = useNavigate();
@@ -36,7 +36,7 @@ const LeftSideComponent = () => {
       {/* Header with Profile */}
       <div className="relative mb-6">
         <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-r from-teal-500 to-teal-600  -mx-6 -mt-6" />
-        
+
         <div className="relative flex flex-col items-center">
           <img
             src={sellerData.profileImage}
@@ -69,7 +69,9 @@ const LeftSideComponent = () => {
           className="flex flex-col items-center p-3 bg-teal-50 rounded-xl hover:bg-teal-100 transition-all hover:shadow-md"
         >
           <Settings className="w-6 h-6 text-teal-600" />
-          <span className="text-sm mt-1 text-teal-600 font-medium">Settings</span>
+          <span className="text-sm mt-1 text-teal-600 font-medium">
+            Settings
+          </span>
         </button>
         <button
           onClick={handleSignOut}
@@ -82,7 +84,9 @@ const LeftSideComponent = () => {
 
       {/* Contact Links */}
       <div className="space-y-3">
-        <h2 className="text-base font-semibold text-gray-800 mb-3">Contact Information</h2>
+        <h2 className="text-base font-semibold text-gray-800 mb-3">
+          Contact Information
+        </h2>
         <div className="grid grid-cols-2 gap-3">
           <a
             href={sellerData.contact.instagram}
@@ -90,7 +94,8 @@ const LeftSideComponent = () => {
             rel="noopener noreferrer"
             className="flex items-center justify-center gap-2 p-3 rounded-xl text-white text-sm hover:opacity-90 transition-all hover:shadow-md"
             style={{
-              background: "linear-gradient(45deg, #f09433, #e6683c 75%, #dc2743)",
+              background:
+                "linear-gradient(45deg, #f09433, #e6683c 75%, #dc2743)",
             }}
           >
             <Instagram className="w-5 h-5" />
@@ -102,7 +107,7 @@ const LeftSideComponent = () => {
             rel="noopener noreferrer"
             className="flex items-center justify-center gap-2 p-3 rounded-xl bg-green-500 text-white text-sm hover:opacity-90 transition-all hover:shadow-md"
           >
-            <MessageSquare className="w-5 h-5" />
+            <WhatsApp className="w-5 h-5" />
             <span className="font-medium">WhatsApp</span>
           </a>
         </div>

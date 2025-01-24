@@ -104,18 +104,18 @@ const SellerList = () => {
                   className="w-full h-full object-cover"
                 />
                 {/* Rating Badge */}
-                <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm px-2.5 py-1 rounded-full flex items-center gap-1.5 shadow-sm group-hover:bg-white/95 transition-colors duration-300">
+                {/* <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm px-2.5 py-1 rounded-full flex items-center gap-1.5 shadow-sm group-hover:bg-white/95 transition-colors duration-300">
                   <Star size={14} className="text-yellow-400" />
                   <span className="text-gray-700 font-medium text-xs">
                     {seller.rating || "N/A"}
                   </span>
-                </div>
+                </div> */}
                 {/* Distance Badge */}
-                <div className="absolute top-3 left-3 bg-[#049b83]/90 backdrop-blur-sm px-2.5 py-1 rounded-full text-white text-xs font-medium shadow-sm group-hover:bg-[#049b83]/95 transition-colors duration-300">
+                {/* <div className="absolute top-3 left-3 bg-[#049b83]/90 backdrop-blur-sm px-2.5 py-1 rounded-full text-white text-xs font-medium shadow-sm group-hover:bg-[#049b83]/95 transition-colors duration-300">
                   {typeof seller.distance === "number"
                     ? `${seller.distance.toFixed(1)}km`
                     : seller.distance || "N/A"}
-                </div>
+                </div> */}
               </div>
 
               {/* Content */}

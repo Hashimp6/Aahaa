@@ -112,29 +112,29 @@ const SellerGrid = () => {
             </div>
 
             {/* Content Section */}
-            <div className="pl-3 pb-1 space-y-1">
-              <h3 className="text-xl font-bold text-gray-800 truncate">
-                {seller.companyName}
-              </h3>
-              <div className="space-y-2">
-                <div className="flex items-center gap-3 text-gray-600">
-                  <Store size={16} className="text-gray-500" />
-                  <span className="truncate text-sm font-medium">
-                    {seller.category}
-                  </span>
-                </div>
-                <div className="flex items-center gap-3 text-gray-600">
-                  <MapPin size={16} className="text-gray-500" />
-                  <span className="truncate text-sm font-medium">
-                    {seller.location && seller.location.coordinates
-                      ? `${seller.location.coordinates[0].toFixed(
-                          4
-                        )}, ${seller.location.coordinates[1].toFixed(4)}`
-                      : "Location not available"}
-                  </span>
+            <div className="p-4 space-y-2 bg-white group-hover:bg-gray-50/50 transition-colors duration-300">
+                <h3 className="text-sm font-semibold text-gray-900 truncate group-hover:text-gray-800">
+                  {seller.companyName}
+                </h3>
+                <div className="space-y-1.5">
+                  <div className="flex items-center gap-2 text-gray-600 text-xs">
+                    <Store
+                      size={14}
+                      className="text-gray-400 group-hover:text-gray-500 transition-colors duration-300"
+                    />
+                    <span className="truncate">
+                      {seller.category || "Uncategorized"}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2 text-gray-600 text-xs">
+                    <MapPin
+                      size={14}
+                      className="text-gray-400 group-hover:text-gray-500 transition-colors duration-300"
+                    />
+                    <span className="truncate">{seller.place}</span>
+                  </div>
                 </div>
               </div>
-            </div>
           </div>
         ))}
       </div>

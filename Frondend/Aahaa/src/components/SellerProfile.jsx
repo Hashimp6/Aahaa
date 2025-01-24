@@ -9,6 +9,7 @@ import {
 import { useLocation, useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import axios from "axios";
+import { Mail, Phone } from "lucide-react";
 
 const SellerProfile = () => {
   const API_URL = import.meta.env.VITE_API_BASE_URL;
@@ -16,6 +17,7 @@ const SellerProfile = () => {
   const location = useLocation();
   const { sellerData } = location.state || {};
   const [posts, setPosts] = useState([]);
+  const [stories, setStories] = useState([]);
   const [activeTab, setActiveTab] = useState("posts");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -34,31 +36,24 @@ const SellerProfile = () => {
       }
     };
 
+    const fetchStories = async () => {
+      try {
+        const response = await axios.get(`${API_URL}/stories/seller/${id}`);
+        setStories(response.data);
+      } catch (error) {
+        console.error("Error fetching stories:", error);
+        showSnackbar(
+          error.response?.data?.message || "Error fetching stories",
+          "error"
+        );
+      }
+    };
+
     if (id) {
       fetchPosts();
+      fetchStories();
     }
   }, [id, API_URL]);
-
-  const stories = [
-    {
-      id: 1,
-      image: "/puffs.png",
-      username: "John Doe",
-      title: "Exciting Announcement!",
-    },
-    {
-      id: 2,
-      image: "/puffs.png",
-      username: "Jane Smith",
-      title: "New Product Launch!",
-    },
-    {
-      id: 3,
-      image: "/puffs.png",
-      username: "Alice Cooper",
-      title: "Seasonal Sale!",
-    },
-  ];
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error}</p>;
@@ -76,46 +71,78 @@ const SellerProfile = () => {
       </div>
 
       {/* Desktop Layout */}
-      <div className="hidden md:flex w-screen overflow-hidden">
+      <div className="hidden md:flex w-screen  overflow-hidden">
         {/* Left Side - Profile Section */}
-        <div className="w-1/4 border-r border-gray-300 bg-white p-5 flex flex-col items-center">
-          <img
-            src={sellerData.profileImage}
-            alt="Profile"
-            className="rounded-full w-32 h-32 border-4 border-gray-300 mb-6"
-          />
-          <div className="text-center mb-8">
-            <h1 className="text-2xl font-bold">{sellerData.companyName}</h1>
-            <p className="text-lg text-gray-600">{sellerData.category}</p>
-            <p className="text-sm text-gray-500">{sellerData.description}</p>
-          </div>
+        <div className="w-1/4 border-r border-gray-300 bg-white  ">
+          <div className="flex flex-col bg-white shadow-lg rounded-xl  h-full">
+            {/* Header with Profile */}
+            <div className="relative mb-6">
+              <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-r from-teal-500 to-teal-600  " />
 
-          {/* Contact Links */}
-          <div className="flex flex-col gap-4 w-full">
-            {renderContactLink(
-              sellerData.contact.instagram,
-              <Instagram />,
-              "Instagram",
-              "bg-gradient-to-r from-pink-500 to-yellow-500"
-            )}
-            {renderContactLink(
-              `https://wa.me/${sellerData.contact.whatsapp}`,
-              <WhatsApp />,
-              "WhatsApp",
-              "bg-green-500"
-            )}
-            {renderContactLink(
-              `tel:${sellerData.contact.phone}`,
-              <Call />,
-              "Call",
-              "bg-blue-500"
-            )}
-            {renderContactLink(
-              `mailto:${sellerData.contact.email}`,
-              <Email />,
-              "Email",
-              "bg-red-500"
-            )}
+              <div className="relative flex flex-col items-center">
+                <img
+                  src={sellerData.profileImage}
+                  alt="Profile"
+                  className="rounded-full w-28 h-28 border-4 border-white shadow-md object-cover mt-4"
+                />
+                <h1 className="text-xl font-bold text-gray-800 mt-3">
+                  {sellerData.companyName}
+                </h1>
+                <p className="text-base text-teal-600 font-medium">
+                  {sellerData.category}
+                </p>
+                <p className="text-sm text-gray-600 text-center mt-2 max-w-sm">
+                  {sellerData.description}
+                </p>
+              </div>
+            </div>
+
+            {/* Contact Links */}
+            <div className="space-y-3 p-2">
+              <h2 className="text-base font-semibold text-gray-800 mb-3">
+                Contact Information
+              </h2>
+              <div className="grid grid-cols-2 gap-3">
+                <a
+                  href={sellerData.contact.instagram}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-center gap-2 p-3 rounded-xl text-white text-sm hover:opacity-90 transition-all hover:shadow-md"
+                  style={{
+                    background:
+                      "linear-gradient(45deg, #f09433, #e6683c 75%, #dc2743)",
+                  }}
+                >
+                  <Instagram className="w-5 h-5" />
+                  <span className="font-medium">Instagram</span>
+                </a>
+                <a
+                  href={sellerData.contact.whatsapp}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-center gap-2 p-3 rounded-xl bg-green-500 text-white text-sm hover:opacity-90 transition-all hover:shadow-md"
+                >
+                  <WhatsApp className="w-5 h-5" />
+                  <span className="font-medium">WhatsApp</span>
+                </a>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <a
+                  href={`tel:${sellerData.contact.phone}`}
+                  className="flex items-center justify-center gap-2 p-3 rounded-xl bg-teal-500 text-white text-sm hover:opacity-90 transition-all hover:shadow-md"
+                >
+                  <Phone className="w-5 h-5" />
+                  <span className="font-medium">Call</span>
+                </a>
+                <a
+                  href={`mailto:${sellerData.contact.email}`}
+                  className="flex items-center justify-center gap-2 p-3 rounded-xl bg-teal-600 text-white text-sm hover:opacity-90 transition-all hover:shadow-md"
+                >
+                  <Mail className="w-5 h-5" />
+                  <span className="font-medium">Email</span>
+                </a>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -157,13 +184,12 @@ const StoriesSection = ({ stories }) => (
         <div key={story.id} className="flex-shrink-0">
           <div className="w-32 h-32 rounded-lg overflow-hidden ring-2 ring-[#049b83] p-0.5 bg-white relative">
             <img
-              src={story.image}
+              src={story.media}
               alt={story.title}
               className="w-full h-full object-cover rounded-lg"
             />
             <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-2">
-              <p className="text-white text-sm truncate">{story.username}</p>
-              <p className="text-white/80 text-xs truncate">{story.title}</p>
+              <p className="text-white text-sm truncate">{story.description}</p>
             </div>
           </div>
         </div>

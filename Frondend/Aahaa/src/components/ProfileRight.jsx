@@ -186,13 +186,11 @@ const RightSideComponent = ({ isMobile = false }) => {
                   />
                   <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-1.5">
                     <p className="text-white text-sm truncate">
-                      {story.username}
+                      {story.description}
                     </p>
-                    <p className="text-white/80 text-xs truncate">
-                      {story.title}
-                    </p>
+                   
                     <button
-                      onClick={() => handleDeleteStory(story.id)}
+                      onClick={() => handleDeleteStory(story._id)}
                       className="absolute top-2 right-2 text-white hover:text-red-500 transition-colors"
                     >
                       <Trash2 className="w-5 h-5" />
@@ -267,7 +265,7 @@ const RightSideComponent = ({ isMobile = false }) => {
                   </button>
                 </div>
                 <div className="p-3">
-                  <div className="flex items-center mb-2 justify-between text-gray-500">
+                  {/* <div className="flex items-center mb-2 justify-between text-gray-500">
                     <button className="flex items-center gap-1 text-[#049b83] hover:text-[#038671] transition-colors duration-300">
                       <Heart className="w-5 h-5" />
                       <span className="text-sm">{post.likes}</span>
@@ -276,7 +274,7 @@ const RightSideComponent = ({ isMobile = false }) => {
                       <MessageCircle className="w-5 h-5" />
                       <span className="text-sm">{post.comments}</span>
                     </button>
-                  </div>
+                  </div> */}
                   <p className="text-sm text-gray-600 line-clamp-2">
                     {post.description}
                   </p>
