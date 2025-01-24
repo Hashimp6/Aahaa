@@ -9,7 +9,7 @@ import ProfileDrawer from "./ProfileDrawer";
 
 const NavComponent = ({ profileImage }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false); 
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedLocation, setSelectedLocation] = useState(null);
 
@@ -103,7 +103,7 @@ SidebarComponent px-3 md:px-4 py-2 md:py-3 text-white"
               </button>
               <button className="flex items-center space-x-2 hover:text-[#87e8d5] transition-colors">
                 <Package size={20} />
-                <span >Products</span>
+                <span>Products</span>
               </button>
               <a
                 href="/search"
@@ -173,7 +173,7 @@ SidebarComponent px-3 md:px-4 py-2 md:py-3 text-white"
                   {isSignedIn && profileImage ? (
                     <img
                       src={profileImage}
-                      alt="Profile"
+                      alt="../../public/Unknown_Member.jpg"
                       className="w-full h-full object-cover"
                     />
                   ) : isSignedIn && user?.name ? (
@@ -186,7 +186,7 @@ SidebarComponent px-3 md:px-4 py-2 md:py-3 text-white"
                     </div>
                   ) : (
                     <img
-                      src="/default-avatar.png"
+                      src="../../public/Unknown_Member.jpg"
                       alt="Unknown Profile"
                       className="w-full h-full object-cover opacity-80"
                     />
@@ -195,8 +195,8 @@ SidebarComponent px-3 md:px-4 py-2 md:py-3 text-white"
 
                 {/* Profile Dropdown */}
                 {isSignedIn ? (
-                  <ProfileDrawer 
-                    isOpen={isDrawerOpen} 
+                  <ProfileDrawer
+                    isOpen={isDrawerOpen}
                     onClose={() => setIsDrawerOpen(false)}
                   />
                 ) : (

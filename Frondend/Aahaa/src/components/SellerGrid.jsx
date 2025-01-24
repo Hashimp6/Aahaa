@@ -87,57 +87,44 @@ const SellerGrid = () => {
   }
 
   return (
-    <div className="w-full h-screen overflow-y-auto bg-gray-100">
-      <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-5 xl:grid-cols-6 gap-2">
+    <div className="w-full h-screen overflow-y-auto bg-white">
+      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 p-2 gap-3 lg:gap-6">
         {sellers.map((seller) => (
           <div
             key={seller._id}
             onClick={() => handleClick(seller)}
-            className="group relative bg-white rounded-2xl overflow-hidden cursor-pointer transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl border border-gray-100"
+            className="bg-white rounded-xl shadow-xl overflow-hidden cursor-pointer transition-all duration-300 hover:-translate-y-2"
           >
-            {/* Gradient Overlay */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end justify-center p-6 z-10">
-              <div className="text-white flex flex-col items-center gap-3 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
-                <span className="font-medium text-lg">View Details</span>
-                <ArrowRight size={24} className="animate-pulse" />
-              </div>
-            </div>
-
             {/* Image Section */}
             <div className="relative h-40">
-              <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-purple-500/10" />
               <img
-                src={seller.profileImage || "/placeholder-image.jpg"}
+                src={seller.profileImage || "../../public/Unknown_Member.jpg"}
                 alt={seller.companyName}
-                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                className="w-full h-full object-cover"
               />
               {/* Rating Badge */}
-              <div className="absolute top-4 right-4 bg-white/95 px-3 py-1.5 rounded-full flex items-center gap-1.5 shadow-lg">
+              {/* <div className="absolute top-4 right-4 bg-white/95 px-3 py-1.5 rounded-full flex items-center gap-1.5 shadow-lg">
                 <Star size={16} className="text-yellow-500" />
                 <span className="text-gray-700 font-semibold">
                   {seller.rating || "N/A"}
                 </span>
-              </div>
+              </div> */}
             </div>
 
             {/* Content Section */}
-            <div className="p-2 space-y-1 bg-white">
+            <div className="pl-3 pb-1 space-y-1">
               <h3 className="text-xl font-bold text-gray-800 truncate">
                 {seller.companyName}
               </h3>
-              <div>
+              <div className="space-y-2">
                 <div className="flex items-center gap-3 text-gray-600">
-                  <div className=" bg-gray-100 rounded-lg">
-                    <Store size={16} className="text-gray-500" />
-                  </div>
+                  <Store size={16} className="text-gray-500" />
                   <span className="truncate text-sm font-medium">
                     {seller.category}
                   </span>
                 </div>
                 <div className="flex items-center gap-3 text-gray-600">
-                  <div className=" bg-gray-100 rounded-lg">
-                    <MapPin size={16} className="text-gray-500" />
-                  </div>
+                  <MapPin size={16} className="text-gray-500" />
                   <span className="truncate text-sm font-medium">
                     {seller.location && seller.location.coordinates
                       ? `${seller.location.coordinates[0].toFixed(

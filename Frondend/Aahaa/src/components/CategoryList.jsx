@@ -44,39 +44,43 @@ const CategoryGrid = () => {
     <div className="min-h-screen overflow-y-auto bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 sm:gap-6">
-          {categories.map((category, index) => (
-            <motion.div
-              key={category._id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.1 }}
-              className="group relative h-36 sm:h-40 overflow-hidden rounded-xl shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer"
+        {categories.map((category, index) => (
+        <motion.div
+          key={category._id}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: index * 0.1 }}
+          className="group relative h-36 sm:h-40 overflow-hidden rounded-xl shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer"
+          style={{ backgroundColor: category.colorCode }}
+          onClick={() => handleCategoryClick(category.name)}
+        >
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/20 to-black/60" />
+          <img
+            src={category.image}
+            alt={category.name}
+            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-110"
+          />
+          <div className="absolute bottom-0 w-full p-3">
+            <h3 className="text-sm sm:text-base font-semibold text-white mb-1 truncate">
+              {category.name}
+            </h3>
+            <div className="w-6 h-0.5 rounded-full bg-white/80 transform origin-left transition-all duration-300 group-hover:w-12 group-hover:bg-white" />
+          </div>
+          <div className="absolute top-2 right-2 flex items-center gap-2">
+            <span
+              className="w-1.5 h-1.5 rounded-full block"
               style={{ backgroundColor: category.colorCode }}
-              onClick={() => handleCategoryClick(category.name)}
-            >
-              <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/20 to-black/60" />
-
-              <img
-                src={category.image}
-                alt={category.name}
-                className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-110"
-              />
-
-              <div className="absolute bottom-0 w-full p-3">
-                <h3 className="text-sm sm:text-base font-semibold text-white mb-1 truncate">
-                  {category.name}
-                </h3>
-                <div className="w-6 h-0.5 rounded-full bg-white/80 transform origin-left transition-all duration-300 group-hover:w-12 group-hover:bg-white" />
+            />
+            {category.postCount && (
+              <div className="flex items-center gap-1 text-white bg-black/50 px-2 py-1 rounded-full text-xs">
+                <MessageCircle className="w-3 h-3" />
+                <span>{category.postCount}</span>
               </div>
-
-              <div className="absolute top-2 right-2">
-                <span
-                  className="w-1.5 h-1.5 rounded-full block"
-                  style={{ backgroundColor: category.colorCode }}
-                />
-              </div>
-            </motion.div>
-          ))}
+            )}
+          </div>
+        </motion.div>
+      ))}
+  
         </div>
       </div>
     </div>

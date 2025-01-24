@@ -155,7 +155,7 @@ const StoriesSection = ({ stories }) => (
     <div className="flex space-x-4 py-4">
       {stories.map((story) => (
         <div key={story.id} className="flex-shrink-0">
-          <div className="w-32 h-32 rounded-lg overflow-hidden ring-2 ring-purple-500 p-0.5 bg-white relative">
+          <div className="w-32 h-32 rounded-lg overflow-hidden ring-2 ring-[#049b83] p-0.5 bg-white relative">
             <img
               src={story.image}
               alt={story.title}
@@ -180,7 +180,7 @@ const TabSection = ({ activeTab, setActiveTab }) => (
         onClick={() => setActiveTab(tab)}
         className={`${
           activeTab === tab
-            ? "text-purple-600 border-b-2 border-purple-600"
+            ? "text-[#049b83] border-b-2 border-[#049b83]"
             : "text-gray-500"
         } px-4 py-2 capitalize`}
       >
@@ -248,20 +248,29 @@ const MobileSellerProfileLayout = ({ sellerData, posts, stories }) => {
             /* Edit Profile Action */
           }}
         >
-          <Settings />
+          <Settings className="w-6 h-6 text-[#049b83]" />
         </button>
       </div>
 
       {/* Social Media Links */}
       <div className="flex justify-around p-4 border-b">
         {[
-          { link: sellerData.contact.instagram, icon: <Instagram /> },
+          {
+            link: sellerData.contact.instagram,
+            icon: <Instagram className="w-6 h-6 text-[#049b83]" />,
+          },
           {
             link: `https://wa.me/${sellerData.contact.whatsapp}`,
-            icon: <WhatsApp />,
+            icon: <WhatsApp className="w-6 h-6 text-[#049b83]" />,
           },
-          { link: `tel:${sellerData.contact.phone}`, icon: <Call /> },
-          { link: `mailto:${sellerData.contact.email}`, icon: <Email /> },
+          {
+            link: `tel:${sellerData.contact.phone}`,
+            icon: <Call className="w-6 h-6 text-[#049b83]" />,
+          },
+          {
+            link: `mailto:${sellerData.contact.email}`,
+            icon: <Email className="w-6 h-6 text-[#049b83]" />,
+          },
         ].map(({ link, icon }, index) => (
           <a key={index} href={link} target="_blank" rel="noopener noreferrer">
             {icon}
