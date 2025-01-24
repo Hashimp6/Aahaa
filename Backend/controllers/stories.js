@@ -44,8 +44,8 @@ const createStories = async (req, res) => {
 // Get all stories for a specific user
 const getStoriesByUser = async (req, res) => {
     try {
-        console.log("seller id in dtory",sellerId);
         const { sellerId } = req.params;
+        
         const stories = await Stories.find({ seller: sellerId }).populate("seller");
         
         if (stories.length === 0) {
