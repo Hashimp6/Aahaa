@@ -76,12 +76,12 @@ function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#049b83] via-black to-[#049b83] text-white">
-      <div className="w-full max-w-md bg-white rounded-lg shadow-lg p-8 text-black">
-        <h1 className="text-2xl font-bold text-center mb-6 text-[#049b83]">
+    <div className="min-h-[90vh] max-h-[97vh] h-screen overflow-hidden flex items-center justify-center bg-gradient-to-br from-[#049b83] via-black to-[#049b83] text-white">
+      <div className="w-full max-w-md bg-white rounded-lg shadow-lg p-6 text-black flex flex-col justify-center">
+        <h1 className="text-2xl font-bold text-center mb-4 text-[#049b83]">
           Login
         </h1>
-        <form className="space-y-4" onSubmit={handleSubmit}>
+        <form className="space-y-3" onSubmit={handleSubmit}>
           {/* Email Field */}
           <TextField
             label="Email"

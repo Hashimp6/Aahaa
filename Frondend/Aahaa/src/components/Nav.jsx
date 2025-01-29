@@ -61,11 +61,12 @@ SidebarComponent px-3 md:px-4 py-2 md:py-3 text-white"
           <div className="flex items-center justify-between">
             {/* Logo */}
             <div className="text-lg md:text-xl font-bold">
-              <a
-                href="/"
-                className="text-white hover:text-[#87e8d5] transition-colors"
-              >
-                MyLogo
+              <a href="/" className="transition-colors">
+                <img
+                  src="/public/icon3.ico" // Update this path
+                  alt="My Logo"
+                  className="h-12 md:h-14 rounded-xl shadow-lg border border-gray-300  bg-white"
+                />
               </a>
             </div>
 
