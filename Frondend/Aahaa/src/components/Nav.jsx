@@ -36,20 +36,6 @@ const NavComponent = ({ profileImage }) => {
     setSelectedLocation({ location, address });
     setIsModalOpen(false);
   };
-  const handleLogout = (e) => {
-    e.preventDefault();
-
-    // Clear the token from localStorage if you're storing it there
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-
-    // Dispatch logout action to clear Redux state
-    dispatch(logout());
-
-    // Redirect to login page
-    navigate("/login");
-  };
-
   return (
     <>
       <nav

@@ -15,7 +15,6 @@ import NewSeller from "./pages/NewSellerreg";
 import SellerProfile from "./components/SellerProfile";
 import CategoryGrid from "./pages/Categories";
 import Categories from "./pages/Categories";
-import SellerGrid from "./components/SellerGrid";
 import SellersPage from "./pages/SellersPage";
 
 function App() {
@@ -53,9 +52,8 @@ function App() {
         <Route
           path="/profile"
           element={
-            <ProtectedRoute>
               <Profile />
-            </ProtectedRoute>
+   
           }
         />
         <Route
@@ -69,26 +67,22 @@ function App() {
         <Route
           path="/seller-profile/:id"
           element={
-            <ProtectedRoute>
               <SellerProfile />
-            </ProtectedRoute>
           }
         />
         <Route
           path="/category"
           element={
-            <ProtectedRoute>
               <Categories />
-            </ProtectedRoute>
+           
           }
         />
         <Route path="/categoryList/:categoryName" element={<SellersPage/>} />
         <Route
           path="/check"
           element={
-            <ProtectedRoute>
               <Checking />
-            </ProtectedRoute>
+
           }
         />
 

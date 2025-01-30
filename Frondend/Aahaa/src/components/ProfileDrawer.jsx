@@ -16,6 +16,8 @@ const ProfileDrawer = ({ isOpen, onClose }) => {
     e.preventDefault();
     localStorage.removeItem("token");
     localStorage.removeItem("user");
+    localStorage.removeItem("userLocation");
+    localStorage.removeItem("locationSet");
     dispatch(logout());
     navigate("/login");
   };

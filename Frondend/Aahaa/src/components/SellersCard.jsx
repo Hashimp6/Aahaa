@@ -20,26 +20,49 @@ const SellerList = () => {
 
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
+  const [nearSeller, setNearSeller] = useState([]);
 
   useEffect(() => {
+    let latitude, longitude;
+
     if (user?.location?.coordinates?.length === 2) {
-      const [longitude, latitude] = user.location.coordinates;
-      dispatch(fetchSellersStart());
-      axios
-        .get(`${API_URL}/search/nearest-sellers`, {
-          params: { latitude, longitude, page },
-        })
-        .then((response) => {
-          const sellers = response.data.sellers;
-          dispatch(fetchSellersSuccess(sellers));
-          if (sellers.length < 50) {
-            setHasMore(false);
-          }
-        })
-        .catch((err) => {
-          dispatch(fetchSellersFailure(err.message));
-        });
+      // Extract coordinates from user object
+      [longitude, latitude] = user.location.coordinates;
+    } else {
+      // Retrieve location from localStorage
+      const userLoc = localStorage.getItem("userLocation");
+
+      if (userLoc) {
+        const parsedLocation = JSON.parse(userLoc);
+        latitude = parsedLocation.lat;
+        longitude = parsedLocation.lng;
+        console.log("lat and long from ls is", latitude, longitude);
+      } else {
+        // Fallback default coordinates (replace with your own)
+        latitude = 0;
+        longitude = 0;
+      }
     }
+
+    dispatch(fetchSellersStart());
+
+    axios
+      .get(`${API_URL}/search/nearest-sellers`, {
+        params: { latitude, longitude, page },
+      })
+      .then((response) => {
+        console.log("sellers are ", response.data);
+        const sellers = response.data.sellers;
+        setNearSeller(sellers);
+        dispatch(fetchSellersSuccess(sellers));
+
+        if (sellers.length < 50) {
+          setHasMore(false);
+        }
+      })
+      .catch((err) => {
+        dispatch(fetchSellersFailure(err.message));
+      });
   }, [user, page, dispatch]);
 
   const handleClick = (seller) => {
@@ -53,16 +76,6 @@ const SellerList = () => {
       setPage((prevPage) => prevPage + 1);
     }
   };
-
-  if (!user?.location?.coordinates || user.location.coordinates.length !== 2) {
-    return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <div className="bg-red-50 text-red-500 px-6 py-4 rounded-lg shadow-sm">
-          Location information not available
-        </div>
-      </div>
-    );
-  }
 
   if (loading) {
     return (
@@ -87,7 +100,7 @@ const SellerList = () => {
   return (
     <div className=" bg-gray-100 ">
       <ul className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-5">
-        {nearestSellers.map((seller) => (
+        {nearSeller.map((seller) => (
           <li
             key={seller._id}
             onClick={() => handleClick(seller)}
