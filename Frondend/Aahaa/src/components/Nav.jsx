@@ -49,7 +49,7 @@ SidebarComponent px-3 md:px-4 py-2 md:py-3 text-white"
             <div className="text-lg md:text-xl font-bold">
               <a href="/" className="transition-colors">
                 <img
-                  src="/public/icon3.ico" // Update this path
+                  src="/icon3.ico" // Update this path
                   alt="My Logo"
                   className="h-12 md:h-14 rounded-xl shadow-lg border border-gray-300  bg-white"
                 />
@@ -160,7 +160,7 @@ SidebarComponent px-3 md:px-4 py-2 md:py-3 text-white"
                   {isSignedIn && profileImage ? (
                     <img
                       src={profileImage}
-                      alt="../../public/Unknown_Member.jpg"
+                      alt="/Unknown_Member.jpg"
                       className="w-full h-full object-cover"
                     />
                   ) : isSignedIn && user?.name ? (
@@ -173,7 +173,7 @@ SidebarComponent px-3 md:px-4 py-2 md:py-3 text-white"
                     </div>
                   ) : (
                     <img
-                      src="../../public/Unknown_Member.jpg"
+                      src="/Unknown_Member.jpg"
                       alt="Unknown Profile"
                       className="w-full h-full object-cover opacity-80"
                     />
