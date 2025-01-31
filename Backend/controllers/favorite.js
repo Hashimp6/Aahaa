@@ -1,38 +1,53 @@
-const Favorite = require("../models/Favorite");
+const Favorite = require("../models/Favorites");
 
 const toggleFavorite = async (req, res) => {
   try {
-    const { sellerId } = req.params;
-    const userId = req.user.id;
+    const { sellerId, userId } = req.body; // Extract userId from request body
+
+    if (!userId) {
+      return res.status(400).json({ message: "User ID is required." });
+    }
 
     let favorite = await Favorite.findOne({ userId });
 
     if (!favorite) {
-      // If no favorites exist, create a new one
+      // If user has no favorites, create new entry
       favorite = new Favorite({ userId, sellerIds: [sellerId] });
     } else {
-      const index = favorite.sellerIds.indexOf(sellerId);
-      if (index === -1) {
-        favorite.sellerIds.push(sellerId); // Add favorite
+      if (favorite.sellerIds.includes(sellerId)) {
+        // Remove seller if already in favorites
+        favorite.sellerIds = favorite.sellerIds.filter(id => id.toString() !== sellerId);
       } else {
-        favorite.sellerIds.splice(index, 1); // Remove favorite
+        // Add seller to favorites
+        favorite.sellerIds.push(sellerId);
       }
     }
 
     await favorite.save();
-    res.json({ success: true, favoriteSellers: favorite.sellerIds });
+
+    // Fetch updated favorite sellers
+    const updatedFavorites = await Favorite.findOne({ userId }).populate("sellerIds");
+
+    res.json({ success: true, favoriteSellers: updatedFavorites.sellerIds });
   } catch (error) {
     res.status(500).json({ message: "Error toggling favorite", error: error.message });
   }
 };
+
 const getFavorites = async (req, res) => {
-    try {
-      const userId = req.user.id;
-      const favorite = await Favorite.findOne({ userId }).populate("sellerIds");
-  
-      res.json({ sellers: favorite ? favorite.sellerIds : [] });
-    } catch (error) {
-      res.status(500).json({ message: "Error fetching favorites", error: error.message });
+  try {
+    const { userId } = req.query; // Get userId from query params
+
+    if (!userId) {
+      return res.status(400).json({ message: "User ID is required." });
     }
-  };
-module.exports={toggleFavorite,getFavorites}  
+
+    const favorite = await Favorite.findOne({ userId }).populate("sellerIds");
+
+    res.json({ sellers: favorite ? favorite.sellerIds : [] });
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching favorites", error: error.message });
+  }
+};
+
+module.exports = { toggleFavorite, getFavorites };

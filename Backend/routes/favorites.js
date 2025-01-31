@@ -1,9 +1,9 @@
 const express = require("express");
-const router = express.Router();
+const favoriteRouter = express.Router();
 const { toggleFavorite, getFavorites } = require("../controllers/favoritesController");
 
 
-router.post("/toggle/:sellerId",  toggleFavorite);
-router.get("/all", getFavorites);
+favoriteRouter.post("/addorremove",  toggleFavorite);
+favoriteRouter.get("/all", getFavorites);
 
-module.exports = router;
+module.exports =favoriteRouter;

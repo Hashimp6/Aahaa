@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { Star, Store, MapPin, ArrowRight, ChevronDown } from "lucide-react";
+import { Star, Store, MapPin, ArrowRight, ChevronDown, Heart } from "lucide-react";
 import {
   fetchSellersStart,
   fetchSellersSuccess,
@@ -21,24 +21,29 @@ const SellerList = () => {
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [nearSeller, setNearSeller] = useState([]);
+  const [favorites, setFavorites] = useState([]);
 
+  // Fetch favorites when component mounts
+  useEffect(() => {
+    if (user) {
+      fetchFavorites();
+    }
+  }, [user]);
+
+  // Fetch sellers (existing logic)
   useEffect(() => {
     let latitude, longitude;
 
     if (user?.location?.coordinates?.length === 2) {
-      // Extract coordinates from user object
       [longitude, latitude] = user.location.coordinates;
     } else {
-      // Retrieve location from localStorage
       const userLoc = localStorage.getItem("userLocation");
 
       if (userLoc) {
         const parsedLocation = JSON.parse(userLoc);
         latitude = parsedLocation.lat;
         longitude = parsedLocation.lng;
-        console.log("lat and long from ls is", latitude, longitude);
       } else {
-        // Fallback default coordinates (replace with your own)
         latitude = 0;
         longitude = 0;
       }
@@ -51,7 +56,6 @@ const SellerList = () => {
         params: { latitude, longitude, page },
       })
       .then((response) => {
-        console.log("sellers are ", response.data);
         const sellers = response.data.sellers;
         setNearSeller(sellers);
         dispatch(fetchSellersSuccess(sellers));
@@ -64,6 +68,36 @@ const SellerList = () => {
         dispatch(fetchSellersFailure(err.message));
       });
   }, [user, page, dispatch]);
+
+  // Fetch favorites
+  const fetchFavorites = async () => {
+    try {
+      const response = await axios.get(`${API_URL}/favorites/all`, {
+        params: { userId: user._id }
+      });
+      setFavorites(response.data.sellers.map(seller => seller._id));
+    } catch (error) {
+      console.error("Error fetching favorites:", error);
+    }
+  };
+
+  // Toggle favorite
+  const toggleFavorite = async (sellerId, e) => {
+    e.stopPropagation(); // Prevent card click event
+    try {
+      const response = await axios.post(`${API_URL}/favorites/addorremove`, {
+        sellerId,
+        userId: user._id
+      });
+
+      // Update local favorites state
+      if (response.data.success) {
+        setFavorites(response.data.favoriteSellers.map(seller => seller._id));
+      }
+    } catch (error) {
+      console.error("Error toggling favorite:", error);
+    }
+  };
 
   const handleClick = (seller) => {
     navigate(`/seller-profile/${seller._id}`, {
@@ -109,6 +143,24 @@ const SellerList = () => {
             <div className="absolute inset-0 shadow-[0_4px_12px_rgba(0,0,0,0.05)] group-hover:shadow-[0_8px_24px_rgba(0,0,0,0.12)] transition-all duration-300" />
 
             <div className="relative z-10">
+              {/* Favorite Heart Icon */}
+              {user && (
+                <button
+                  onClick={(e) => toggleFavorite(seller._id, e)}
+                  className="absolute top-3 right-3 z-20 hover:scale-110 transition-all duration-300"
+                >
+                  <Heart
+                    size={24}
+                    className={`
+                      ${favorites.includes(seller._id) 
+                        ? 'fill-red-500 text-red-500' 
+                        : 'text-white/80 hover:text-gray-200'}
+                      transition-all duration-300
+                    `}
+                  />
+                </button>
+              )}
+
               {/* Image Container */}
               <div className="relative h-40 group-hover:brightness-[1.02] transition-all duration-300">
                 <img
@@ -116,19 +168,6 @@ const SellerList = () => {
                   alt={seller.companyName}
                   className="w-full h-full object-cover"
                 />
-                {/* Rating Badge */}
-                {/* <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm px-2.5 py-1 rounded-full flex items-center gap-1.5 shadow-sm group-hover:bg-white/95 transition-colors duration-300">
-                  <Star size={14} className="text-yellow-400" />
-                  <span className="text-gray-700 font-medium text-xs">
-                    {seller.rating || "N/A"}
-                  </span>
-                </div> */}
-                {/* Distance Badge */}
-                {/* <div className="absolute top-3 left-3 bg-[#049b83]/90 backdrop-blur-sm px-2.5 py-1 rounded-full text-white text-xs font-medium shadow-sm group-hover:bg-[#049b83]/95 transition-colors duration-300">
-                  {typeof seller.distance === "number"
-                    ? `${seller.distance.toFixed(1)}km`
-                    : seller.distance || "N/A"}
-                </div> */}
               </div>
 
               {/* Content */}
