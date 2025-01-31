@@ -16,46 +16,19 @@ import SellerProfile from "./components/SellerProfile";
 import CategoryGrid from "./pages/Categories";
 import Categories from "./pages/Categories";
 import SellersPage from "./pages/SellersPage";
+import Search from "./pages/Search";
 
 function App() {
   return (
     <Router>
       <Routes>
-      <Route
-          path="/"
-          element={
-            
-              <Navigate to="/home" replace />
-          
-          }
-        />
-        <Route
-          path="/register"
-          element={
-              <RegistrationPage />
-          }
-        />
-        <Route
-          path="/login"
-          element={
-              <LoginPage />
-          }
-        />
+        <Route path="/" element={<Navigate to="/home" replace />} />
+        <Route path="/register" element={<RegistrationPage />} />
+        <Route path="/login" element={<LoginPage />} />
 
         {/* Protected routes (redirect to login if logged out) */}
-        <Route
-          path="/home"
-          element={
-              <HomePage />
-          }
-        />
-        <Route
-          path="/profile"
-          element={
-              <Profile />
-   
-          }
-        />
+        <Route path="/home" element={<HomePage />} />
+        <Route path="/profile" element={<Profile />} />
         <Route
           path="/sellerForm"
           element={
@@ -64,30 +37,13 @@ function App() {
             </ProtectedRoute>
           }
         />
-        <Route
-          path="/seller-profile/:id"
-          element={
-              <SellerProfile />
-          }
-        />
-        <Route
-          path="/category"
-          element={
-              <Categories />
-           
-          }
-        />
-        <Route path="/categoryList/:categoryName" element={<SellersPage/>} />
-        <Route
-          path="/check"
-          element={
-              <Checking />
-
-          }
-        />
+        <Route path="/seller-profile/:id" element={<SellerProfile />} />
+        <Route path="/category" element={<Categories />} />
+        <Route path="/search" element={<Search />} />
+        <Route path="/categoryList/:categoryName" element={<SellersPage />} />
+        <Route path="/check" element={<Checking />} />
 
         {/* Root route */}
-       
       </Routes>
     </Router>
   );
