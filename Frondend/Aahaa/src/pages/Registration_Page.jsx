@@ -31,14 +31,14 @@ function RegistrationPage() {
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault(); // Prevent the default form submission
-    setLoading(true); 
+    setLoading(true);
     try {
       // Use relative URL - the proxy will handle the forwarding
       const response = await axios.post(`${API_URL}/auth/register`, formData);
 
       if (response.status === 201) {
         console.log("Registration successful:", response.data);
-        setLoading(false); 
+        setLoading(false);
         navigate("/login");
       }
     } catch (err) {
@@ -52,12 +52,12 @@ function RegistrationPage() {
         setError("An error occurred. Please try again later.");
       }
       console.error("Error:", err);
-      setLoading(false); 
+      setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#049b83] via-black to-[#049b83] text-white">
+    <div className="fixed inset-0 flex items-center justify-center bg-gradient-to-br from-[#049b83] via-black to-[#049b83] text-white">
       <div className="w-full max-w-md bg-white rounded-lg shadow-lg p-8 text-black">
         <h1 className="text-2xl font-bold text-center mb-6 text-[#049b83]">
           Registration
@@ -103,11 +103,11 @@ function RegistrationPage() {
             }}
             className="hover:bg-[#03785f]"
           >
-             {loading ? (
-                <CircularProgress size={24} sx={{ color: "white" }} />
-              ) : (
-                "Register"
-              )}
+            {loading ? (
+              <CircularProgress size={24} sx={{ color: "white" }} />
+            ) : (
+              "Register"
+            )}
           </Button>
 
           {/* Error message */}

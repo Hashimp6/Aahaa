@@ -82,8 +82,70 @@ const getSellersByCategory = async (req, res) => {
     });
   }
 };
+const searchSellers = async (req, res) => {
+  try {
+    const { searchTerm, latitude, longitude } = req.query;
+
+    if (!searchTerm) {
+      return res.status(400).json({ message: "Search term is required." });
+    }
+
+    // Create base query for location if provided
+    let locationQuery = {};
+    if (latitude && longitude) {
+      locationQuery = {
+        location: {
+          $near: {
+            $geometry: {
+              type: "Point",
+              coordinates: [parseFloat(longitude), parseFloat(latitude)],
+            },
+          },
+        },
+      };
+    }
+
+    // Create regex pattern for case-insensitive partial matches
+    const searchRegex = new RegExp(searchTerm, 'i');
+
+    // First try to find exact matches in company name
+    const exactMatches = await Seller.find({
+      ...locationQuery,
+      companyName: new RegExp(`^${searchTerm}$`, 'i')
+    }).limit(50);
+
+    // If exact matches exist, return them
+    if (exactMatches.length > 0) {
+      return res.status(200).json({
+        sellers: exactMatches,
+        matchType: 'exact'
+      });
+    }
+
+    // If no exact matches, search for similar matches in company name and description
+    const similarMatches = await Seller.find({
+      ...locationQuery,
+      $or: [
+        { companyName: searchRegex },
+        { description: searchRegex }
+      ]
+    }).limit(50);
+
+    res.status(200).json({
+      sellers: similarMatches,
+      matchType: 'similar'
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      message: "Error searching sellers.",
+      error: error.message,
+    });
+  }
+};
 
 module.exports = {
   getNearestSellers,
   getSellersByCategory,
+  searchSellers
 };

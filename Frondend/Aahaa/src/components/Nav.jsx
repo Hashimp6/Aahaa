@@ -6,12 +6,14 @@ import AddSellerPage from "./CompanyDetails";
 import { useNavigate } from "react-router-dom";
 import { logout } from "../redux/slices/authSlice";
 import ProfileDrawer from "./ProfileDrawer";
+import SearchResults from "./SearchSellers";
 
 const NavComponent = ({ profileImage }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedLocation, setSelectedLocation] = useState(null);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
 
   const user = useSelector((state) => state.auth.user);
   const isSignedIn = !!user;
@@ -92,22 +94,22 @@ SidebarComponent px-3 md:px-4 py-2 md:py-3 text-white"
                 <Package size={20} />
                 <span>Products</span>
               </button>
-              <a
-                href="/search"
-                className="flex items-center space-x-2 hover:text-[#87e8d5] transition-colors"
-              >
-                <svg
-                  className="w-5 h-5"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                >
-                  <circle cx="11" cy="11" r="8" />
-                  <path d="M21 21l-4.35-4.35" />
-                </svg>
-                <span>Search</span>
-              </a>
+              <button
+          onClick={() => setIsSearchOpen(true)}
+          className="flex items-center space-x-2 hover:text-[#87e8d5] transition-colors"
+        >
+          <svg
+            className="w-5 h-5"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+          >
+            <circle cx="11" cy="11" r="8" />
+            <path d="M21 21l-4.35-4.35" />
+          </svg>
+          <span>Search</span>
+        </button>
             </div>
 
             {/* Mobile Menu Button and Right Section */}
@@ -265,6 +267,10 @@ SidebarComponent px-3 md:px-4 py-2 md:py-3 text-white"
           />
         </div>
       )}
+       <SearchResults 
+        isOpen={isSearchOpen} 
+        onClose={() => setIsSearchOpen(false)}
+      />
     </>
   );
 };

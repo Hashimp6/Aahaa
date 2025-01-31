@@ -76,8 +76,8 @@ function LoginPage() {
   };
 
   return (
-    <div className="min-h-[90vh] max-h-[97vh] h-screen overflow-hidden flex items-center justify-center bg-gradient-to-br from-[#049b83] via-black to-[#049b83] text-white">
-      <div className="w-full max-w-md bg-white rounded-lg shadow-lg p-6 text-black flex flex-col justify-center">
+    <div className="fixed inset-0 flex items-center justify-center bg-gradient-to-br from-[#049b83] via-black to-[#049b83] text-white">
+      <div className="w-full max-w-md bg-white rounded-lg shadow-lg p-6 text-black">
         <h1 className="text-2xl font-bold text-center mb-4 text-[#049b83]">
           Login
         </h1>
@@ -119,10 +119,8 @@ function LoginPage() {
               "Login"
             )}
           </Button>
-
           {/* Error message */}
           {error && <p className="text-red-500 text-center mt-4">{error}</p>}
-
           {/* Not Registered Link */}
           <div className="text-center mt-4">
             <p>

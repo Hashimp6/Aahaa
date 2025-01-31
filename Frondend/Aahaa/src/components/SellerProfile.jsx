@@ -10,6 +10,7 @@ import { useLocation, useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import axios from "axios";
 import { Mail, Phone } from "lucide-react";
+import ShareProfileButton from "./ShareProfileButton";
 
 const SellerProfile = () => {
   const API_URL = import.meta.env.VITE_API_BASE_URL;
@@ -80,6 +81,9 @@ const SellerProfile = () => {
               <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-r from-teal-500 to-teal-600  " />
 
               <div className="relative flex flex-col items-center">
+                <div className="absolute top-4 right-4">
+                  <ShareProfileButton sellerData={sellerData} />
+                </div>
                 <img
                   src={sellerData.profileImage}
                   alt="Profile"
@@ -268,14 +272,17 @@ const MobileSellerProfileLayout = ({ sellerData, posts, stories }) => {
             <p className="text-sm text-gray-600">{sellerData.category}</p>
           </div>
         </div>
-        <button
-          className="p-2 bg-gray-100 rounded-full"
-          onClick={() => {
-            /* Edit Profile Action */
-          }}
-        >
-          <Settings className="w-6 h-6 text-[#049b83]" />
-        </button>
+        <div className="flex items-center gap-2">
+    <ShareProfileButton sellerData={sellerData} />
+    <button
+      className="p-2 bg-gray-100 rounded-full"
+      onClick={() => {
+        /* Edit Profile Action */
+      }}
+    >
+      <Settings className="w-6 h-6 text-[#049b83]" />
+    </button>
+  </div>
       </div>
 
       {/* Social Media Links */}
