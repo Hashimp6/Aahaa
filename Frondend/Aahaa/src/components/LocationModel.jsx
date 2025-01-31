@@ -284,7 +284,7 @@ const LocationSelector = ({ onClose }) => {
         <X className="h-8 w-8 bg-white " />
       </button>
       <div className="p-6">
-        <h2 className="text-xl font-semibold mb-4">Select Location</h2>
+        <h2 className="text-xl font-semibold mb-4">Select Your Location</h2>
 
         <div className="space-y-4">
           {/* Search Input */}
