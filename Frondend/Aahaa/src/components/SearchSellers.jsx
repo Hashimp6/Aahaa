@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Store, MapPin, X, Search } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { useSelector } from 'react-redux';
 
 const SearchResults = ({ isOpen, onClose }) => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -9,6 +10,7 @@ const SearchResults = ({ isOpen, onClose }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
+  const user = useSelector((state) => state.auth.user);
 
   useEffect(() => {
     if (searchTerm.length >= 2) {
@@ -22,10 +24,40 @@ const SearchResults = ({ isOpen, onClose }) => {
     try {
       setIsLoading(true);
       setError(null);
+
+      // Get location coordinates
+      let latitude, longitude;
+
+      if (user?.location?.coordinates?.length === 2) {
+        // Extract coordinates from user object
+        [longitude, latitude] = user.location.coordinates;
+      } else {
+        // Retrieve location from localStorage
+        const userLoc = localStorage.getItem("userLocation");
+
+        if (userLoc) {
+          const parsedLocation = JSON.parse(userLoc);
+          latitude = parsedLocation.lat;
+          longitude = parsedLocation.lng;
+        } else {
+          // Fallback default coordinates
+          latitude = 0;
+          longitude = 0;
+        }
+      }
+
+      // Make API request with all required parameters
       const response = await axios.get(`${API_URL}/search/search-sellers`, {
-        params: { searchTerm: searchTerm },
+        params: {
+          searchTerm,
+          latitude,
+          longitude
+        }
       });
+
+      // Handle the matchType from backend
       setSellers(response.data.sellers);
+      
     } catch (err) {
       setError("Failed to fetch results");
       setSellers([]);
@@ -33,7 +65,6 @@ const SearchResults = ({ isOpen, onClose }) => {
       setIsLoading(false);
     }
   };
-
   const handleClick = (seller) => {
     navigate(`/seller-profile/${seller._id}`, {
       state: { sellerData: seller },

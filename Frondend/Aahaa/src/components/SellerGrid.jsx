@@ -18,11 +18,27 @@ const SellerGrid = () => {
     const fetchSellers = async () => {
       setIsLoading(true);
       try {
-        // Fallback to default coordinates if user location not available
-        const defaultCoordinates = [0, 0]; // Replace with your default location
-        const coordinates = user?.location?.coordinates || defaultCoordinates;
+       
+        let latitude, longitude;
 
-        const [latitude, longitude] = coordinates;
+    if (user?.location?.coordinates?.length === 2) {
+      // Extract coordinates from user object
+      [longitude, latitude] = user.location.coordinates;
+    } else {
+      // Retrieve location from localStorage
+      const userLoc = localStorage.getItem("userLocation");
+
+      if (userLoc) {
+        const parsedLocation = JSON.parse(userLoc);
+        latitude = parsedLocation.lat;
+        longitude = parsedLocation.lng;
+        console.log("lat and long from ls is", latitude, longitude);
+      } else {
+        // Fallback default coordinates (replace with your own)
+        latitude = 0;
+        longitude = 0;
+      }
+    }
 
         const response = await axios.get(
           `${API_URL}/search/sellers-by-category`,

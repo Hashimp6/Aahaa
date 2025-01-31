@@ -125,11 +125,8 @@ const searchSellers = async (req, res) => {
     // If no exact matches, search for similar matches in company name and description
     const similarMatches = await Seller.find({
       ...locationQuery,
-      $or: [
-        { companyName: searchRegex },
-        { description: searchRegex }
-      ]
-    }).limit(50);
+      companyName: searchRegex, // Only searching in companyName
+    }).limit(20);
 
     res.status(200).json({
       sellers: similarMatches,

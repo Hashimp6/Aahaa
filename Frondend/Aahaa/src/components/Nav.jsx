@@ -267,10 +267,10 @@ SidebarComponent px-3 md:px-4 py-2 md:py-3 text-white"
           />
         </div>
       )}
-       <SearchResults 
-        isOpen={isSearchOpen} 
-        onClose={() => setIsSearchOpen(false)}
-      />
+      <SearchResults 
+  isOpen={isSearchOpen} 
+  onClose={() => setIsSearchOpen(false)}  
+/>
     </>
   );
 };
