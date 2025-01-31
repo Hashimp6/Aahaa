@@ -1,16 +1,17 @@
-import React, { useState, useEffect } from 'react';
-import { Store, MapPin, X, Search } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import { useSelector } from 'react-redux';
+import React, { useState, useEffect } from "react";
+import { Store, MapPin, X, Search } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { useSelector } from "react-redux";
 
 const SearchResults = ({ isOpen, onClose }) => {
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const [sellers, setSellers] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
   const user = useSelector((state) => state.auth.user);
+  const API_URL = import.meta.env.VITE_API_BASE_URL;
 
   useEffect(() => {
     if (searchTerm.length >= 2) {
@@ -51,13 +52,12 @@ const SearchResults = ({ isOpen, onClose }) => {
         params: {
           searchTerm,
           latitude,
-          longitude
-        }
+          longitude,
+        },
       });
 
       // Handle the matchType from backend
       setSellers(response.data.sellers);
-      
     } catch (err) {
       setError("Failed to fetch results");
       setSellers([]);
@@ -90,7 +90,7 @@ const SearchResults = ({ isOpen, onClose }) => {
               autoFocus
             />
           </div>
-          <button 
+          <button
             onClick={onClose}
             className="bg-white p-3 rounded-xl hover:bg-gray-50 transition-colors duration-200 shadow-sm border border-teal-100"
           >
@@ -99,7 +99,7 @@ const SearchResults = ({ isOpen, onClose }) => {
         </div>
 
         {/* Results Area */}
-        <div className="flex-1 overflow-y-auto px-6 py-4">
+        <div className="flex-1 overflow-y-auto px-4 py-3">
           {isLoading && (
             <div className="w-full min-h-[60vh] flex justify-center items-center">
               <div className="animate-spin rounded-full h-12 w-12 border-4 border-teal-200 border-t-teal-500"></div>
@@ -115,19 +115,24 @@ const SearchResults = ({ isOpen, onClose }) => {
             </div>
           )}
 
-          {!isLoading && !error && sellers.length === 0 && searchTerm.length >= 2 && (
-            <div className="w-full min-h-[60vh] bg-gradient-to-br from-teal-50 to-white rounded-2xl flex justify-center items-center p-8">
-              <div className="text-center space-y-4">
-                <Store size={48} className="mx-auto text-teal-400" />
-                <p className="text-xl font-medium text-gray-600">
-                  No sellers found
-                </p>
-                <p className="text-gray-400">Try adjusting your search terms</p>
+          {!isLoading &&
+            !error &&
+            sellers.length === 0 &&
+            searchTerm.length >= 2 && (
+              <div className="w-full min-h-[60vh] bg-gradient-to-br from-teal-50 to-white rounded-2xl flex justify-center items-center p-8">
+                <div className="text-center space-y-4">
+                  <Store size={48} className="mx-auto text-teal-400" />
+                  <p className="text-xl font-medium text-gray-600">
+                    No sellers found
+                  </p>
+                  <p className="text-gray-400">
+                    Try adjusting your search terms
+                  </p>
+                </div>
               </div>
-            </div>
-          )}
+            )}
 
-          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
             {sellers.map((seller) => (
               <div
                 key={seller._id}
@@ -135,9 +140,11 @@ const SearchResults = ({ isOpen, onClose }) => {
                 className="group bg-white rounded-2xl overflow-hidden cursor-pointer transition-all duration-300 hover:-translate-y-2 hover:shadow-xl shadow-md border border-teal-50"
               >
                 {/* Image Section */}
-                <div className="relative h-48 overflow-hidden">
+                <div className="relative  sm:h-28 md:h-28 lg:h-44 overflow-hidden">
                   <img
-                    src={seller.profileImage || "../../public/Unknown_Member.jpg"}
+                    src={
+                      seller.profileImage || "../../public/Unknown_Member.jpg"
+                    }
                     alt={seller.companyName}
                     className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500"
                   />
@@ -145,11 +152,11 @@ const SearchResults = ({ isOpen, onClose }) => {
                 </div>
 
                 {/* Content Section */}
-                <div className="p-4 space-y-3 bg-white">
+                <div className="pl-2 p-1 space-y-1 bg-white">
                   <h3 className="text-lg font-semibold text-gray-800 truncate group-hover:text-teal-600 transition-colors duration-300">
                     {seller.companyName}
                   </h3>
-                  <div className="space-y-2">
+                  <div className="space-y-1">
                     <div className="flex items-center gap-2 text-gray-600 text-sm">
                       <Store
                         size={16}
