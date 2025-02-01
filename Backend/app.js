@@ -8,6 +8,7 @@ const productRouter = require('./routes/products');
 const postRouter = require('./routes/post');
 const storiesRouter = require('./routes/stories');
 const favoriteRouter = require('./routes/favorites');
+const otpRouter = require('./routes/otpVerification');
 
 const app = express();
 
@@ -27,6 +28,7 @@ app.use('/product', productRouter);
 app.use('/post', postRouter);
 app.use('/stories', storiesRouter);
 app.use('/favorites', favoriteRouter);
+app.use("/otp", otpRouter);
 
 
 module.exports = app;

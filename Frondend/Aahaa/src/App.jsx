@@ -18,6 +18,7 @@ import Categories from "./pages/Categories";
 import SellersPage from "./pages/SellersPage";
 import Search from "./pages/Search";
 import Favorites from "./pages/Favorites";
+import OtpVerificationPage from "./pages/OTPVerification";
 
 function App() {
   return (
@@ -41,6 +42,8 @@ function App() {
         <Route path="/seller-profile/:id" element={<SellerProfile />} />
         <Route path="/category" element={<Categories />} />
         <Route path="/search" element={<Search />} />
+        <Route path=" /otp-verification" element={<OtpVerificationPage />} />
+       
         <Route path="/favorites" element={<Favorites />} />
         <Route path="/categoryList/:categoryName" element={<SellersPage />} />
         <Route path="/check" element={<Checking />} />

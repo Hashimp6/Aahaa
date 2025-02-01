@@ -39,7 +39,7 @@ function RegistrationPage() {
       if (response.status === 201) {
         console.log("Registration successful:", response.data);
         setLoading(false);
-        navigate("/login");
+        navigate("/otp-verification");
       }
     } catch (err) {
       if (err.response) {
