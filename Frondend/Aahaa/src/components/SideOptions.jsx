@@ -1,18 +1,33 @@
 import React, { useState } from "react";
 import { Flame, Navigation, Heart, Settings } from "lucide-react";
+import { useNavigate, useLocation } from "react-router-dom";
 
 const SidebarComponent = () => {
-  const [activeButton, setActiveButton] = useState("trending");
+  const navigate = useNavigate();
+  const location = useLocation();
+  
+  // Set initial active button based on current path
+  const getCurrentPath = () => {
+    const path = location.pathname;
+    if (path === "/") return "trending";
+    return path.slice(1); // Remove the leading slash
+  };
+
+  const [activeButton, setActiveButton] = useState(getCurrentPath());
 
   const menuItems = [
-    { id: "trending", icon: Flame, label: "Trending" },
-    { id: "nearby", icon: Navigation, label: "Nearby" },
-    { id: "favorites", icon: Heart, label: "Favorites" },
-    { id: "settings", icon: Settings, label: "Settings" }
+    { id: "trending", icon: Flame, label: "Trending", path: "/" },
+    { id: "nearby", icon: Navigation, label: "Nearby", path: "/" },
+    { id: "favorites", icon: Heart, label: "Favorites", path: "/favorites" },
+    { id: "settings", icon: Settings, label: "Settings", path: "/" }
   ];
 
   const handleButtonClick = (buttonId) => {
     setActiveButton(buttonId);
+    const item = menuItems.find(item => item.id === buttonId);
+    if (item) {
+      navigate(item.path);
+    }
   };
 
   return (
@@ -45,7 +60,10 @@ const SidebarComponent = () => {
               );
             })}
           </div>
-          <button className="w-16 h-16 rounded-xl flex flex-col items-center justify-center gap-2 mb-14 text-white/60 hover:bg-white/10 transition-all duration-300">
+          <button 
+            className="w-16 h-16 rounded-xl flex flex-col items-center justify-center gap-2 mb-14 text-white/60 hover:bg-white/10 transition-all duration-300"
+            onClick={() => handleButtonClick("settings")}
+          >
             <Settings size={24} />
             <span className="text-xs font-medium">Settings</span>
           </button>

@@ -2,9 +2,12 @@ import React from "react";
 import RightSideComponent from "./ProfileRight";
 import { useSelector } from "react-redux";
 import { Instagram } from "@mui/icons-material";
-import { Mail, MessageSquare, Phone } from "lucide-react";
+import { EditIcon, Mail, MessageSquare, Phone } from "lucide-react";
+import ShareProfileButton from "./ShareProfileButton";
+import { useNavigate } from "react-router-dom";
 
 const MobileProfileLayout = () => {
+  const navigate = useNavigate();
   const sellerData = useSelector((state) => state.seller.sellerData);
 
   return (
@@ -22,12 +25,15 @@ const MobileProfileLayout = () => {
             <p className="text-sm text-gray-600">{sellerData.category}</p>
           </div>
         </div>
-        <button
-          onClick={() => navigate("/sellerForm")}
-          className="px-4 py-2 bg-[#049b83] text-white rounded-lg text-sm"
-        >
-          Edit Profile
-        </button>
+        <div className="flex items-center space-x-2">
+          <button
+            onClick={() => navigate("/sellerForm")}
+            className="p-2 text-[#049b83] hover:bg-gray-100 rounded-full"
+          >
+            <EditIcon />
+          </button>
+          <ShareProfileButton sellerData={sellerData} />
+        </div>
       </div>
 
       {/* Social Media Links */}

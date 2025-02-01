@@ -16,18 +16,35 @@ import {
 import CameraAltIcon from "@mui/icons-material/CameraAlt";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { useSelector } from "react-redux";
+import { setSellerData } from '../redux/slices/sellerSlice';
+import { useDispatch, useSelector } from "react-redux";
 
 const SellerForm = () => {
   const API_URL = import.meta.env.VITE_API_BASE_URL;
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const user = useSelector((state) => state.auth.user);
   const sellerData = useSelector((state) => state.seller.sellerData);
 
   const userId = user?._id;
   const isUpdate = sellerData !== null && sellerData !== undefined;
   const sellerId = isUpdate ? sellerData._id : null;
-
+  const categories = [
+    "Mehandi",
+    "Hambers",
+    "Calligraphy",
+    "Potraits",
+    "Makeup",
+    "Photography",
+    "Hair",
+    "Tattoo",
+    "Cakes",
+    "Wood",
+    "Boutique",
+    "Resin",
+    "Tailoring",
+    "Sweets",
+  ];
   const [formData, setFormData] = useState({
     companyName: "",
     description: "",
@@ -123,7 +140,7 @@ const SellerForm = () => {
     setError(null);
 
     try {
-      console.log("location from frnd ends",formData.location);
+      console.log("location from frnd ends", formData.location);
       if (!userId) {
         throw new Error("User not found. Please login again.");
       }
@@ -155,6 +172,7 @@ const SellerForm = () => {
             },
           }
         );
+        dispatch(setSellerData(response.data.seller));
       } else {
         response = await axios.post(
           `${API_URL}/sellers/register/${userId}`,
@@ -165,6 +183,7 @@ const SellerForm = () => {
             },
           }
         );
+        dispatch(setSellerData(response.data.seller));
       }
 
       if (response.status === 200 || response.status === 201) {
@@ -247,7 +266,6 @@ const SellerForm = () => {
               variant="outlined"
               fullWidth
             />
-
             <TextField
               label="Description"
               value={formData.description}
@@ -262,7 +280,6 @@ const SellerForm = () => {
               rows={4}
               fullWidth
             />
-
             <FormControl fullWidth>
               <InputLabel>Category</InputLabel>
               <Select
@@ -272,29 +289,29 @@ const SellerForm = () => {
                 }
                 label="Category"
               >
-                <MenuItem value="restaurant">Restaurant</MenuItem>
-                <MenuItem value="supermarket">Supermarket</MenuItem>
-                <MenuItem value="hotel">Hotel</MenuItem>
-                <MenuItem value="wedding">Wedding</MenuItem>
-                <MenuItem value="art">Art</MenuItem>
-                <MenuItem value="other">Other</MenuItem>
+                {categories.map((category) => (
+                  <MenuItem key={category} value={category}>
+                    {category.charAt(0).toUpperCase() + category.slice(1)}
+                  </MenuItem>
+                ))}
               </Select>
             </FormControl>
-
-            <TextField
-              id="location-search-input"
-              label="Search Location"
-              variant="outlined"
-              value={formData.location}
-              onChange={(e) =>
-                setFormData((prev) => ({
-                  ...prev,
-                  location: e.target.value,
-                }))
-              }
-              fullWidth
-            />
-
+           
+            {!sellerData && (
+  <TextField
+    id="location-search-input"
+    label="Search Location"
+    variant="outlined"
+    value={formData.location}
+    onChange={(e) =>
+      setFormData((prev) => ({
+        ...prev,
+        location: e.target.value,
+      }))
+    }
+    fullWidth
+  />
+)}
             <Box display="grid" gridTemplateColumns="1fr 1fr" gap={2}>
               <TextField
                 label="Phone"
@@ -342,13 +359,11 @@ const SellerForm = () => {
                 variant="outlined"
               />
             </Box>
-
             {error && (
               <Alert severity="error" sx={{ mt: 2 }}>
                 {error}
               </Alert>
             )}
-
             <Button
               type="submit"
               variant="contained"

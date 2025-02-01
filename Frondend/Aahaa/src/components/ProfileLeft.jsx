@@ -8,8 +8,10 @@ import {
   Settings,
   LogOut,
   ClipboardList,
+  EditIcon,
 } from "lucide-react";
 import { WhatsApp } from "@mui/icons-material";
+import ShareProfileButton from "./ShareProfileButton";
 
 const LeftSideComponent = () => {
   const navigate = useNavigate();
@@ -38,7 +40,9 @@ const LeftSideComponent = () => {
         <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-r from-teal-500 to-teal-600  -mx-6 -mt-6" />
 
         <div className="relative flex flex-col items-center">
-          <img
+        <div className="absolute top-4 right-4">
+                  <ShareProfileButton sellerData={sellerData} />
+                </div> <img
             src={sellerData.profileImage}
             alt="Profile"
             className="rounded-full w-28 h-28 border-4 border-white shadow-md object-cover mt-4"
@@ -68,9 +72,9 @@ const LeftSideComponent = () => {
           onClick={() => navigate("/sellerForm")}
           className="flex flex-col items-center p-3 bg-teal-50 rounded-xl hover:bg-teal-100 transition-all hover:shadow-md"
         >
-          <Settings className="w-6 h-6 text-teal-600" />
+          <EditIcon className="w-6 h-6 text-teal-600" />
           <span className="text-sm mt-1 text-teal-600 font-medium">
-            Settings
+            Edit
           </span>
         </button>
         <button
