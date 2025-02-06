@@ -30,27 +30,30 @@ function RegistrationPage() {
 
   // Handle form submission
   const handleSubmit = async (e) => {
-    e.preventDefault(); // Prevent the default form submission
+    e.preventDefault();
     setLoading(true);
     try {
-      // Use relative URL - the proxy will handle the forwarding
-      const response = await axios.post(`${API_URL}/auth/register`, formData);
+      // First register the user
+      const registerResponse = await axios.post(`${API_URL}/auth/register`, formData);
 
-      if (response.status === 201) {
-        console.log("Registration successful:", response.data);
-        setLoading(false);
-        navigate("/otp-verification");
+      if (registerResponse.status === 201) {
+        // After successful registration, send OTP
+        const otpResponse = await axios.post(`${API_URL}/otp/send-otp`, {
+          email: formData.email
+        });
+
+        if (otpResponse.status === 200) {
+          console.log("Registration and OTP sending successful");
+          // Store email in sessionStorage for OTP verification page
+          sessionStorage.setItem('verificationEmail', formData.email);
+          setLoading(false);
+          navigate("/otp-verification");
+        }
       }
     } catch (err) {
-      if (err.response) {
-        // If there's a response error from the server
-        setError(
-          err.response.data.message || "Registration failed. Please try again."
-        );
-      } else {
-        // If no response was received or network error
-        setError("An error occurred. Please try again later.");
-      }
+      setError(
+        err.response?.data?.message || "Registration failed. Please try again."
+      );
       console.error("Error:", err);
       setLoading(false);
     }

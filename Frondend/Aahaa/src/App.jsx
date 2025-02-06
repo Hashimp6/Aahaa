@@ -42,7 +42,7 @@ function App() {
         <Route path="/seller-profile/:id" element={<SellerProfile />} />
         <Route path="/category" element={<Categories />} />
         <Route path="/search" element={<Search />} />
-        <Route path=" /otp-verification" element={<OtpVerificationPage />} />
+        <Route path="/otp-verification" element={<OtpVerificationPage />} />
        
         <Route path="/favorites" element={<Favorites />} />
         <Route path="/categoryList/:categoryName" element={<SellersPage />} />
