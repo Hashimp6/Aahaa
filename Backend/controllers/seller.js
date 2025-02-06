@@ -217,7 +217,7 @@ const updateSellerDetails = async (req, res) => {
         companyName,
         description,
         category,
-        contact,
+        contact:parsedContact,
         profileImage: profileImageURL,
       },
       { new: true } // Return the updated seller document
