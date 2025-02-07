@@ -3,16 +3,18 @@ const Seller = require("../models/Seller");
 // Get nearest sellers by location
 const getNearestSellers = async (req, res) => {
   try {
-    console.log("started");
-    const { latitude, longitude, page = 1 } = req.query;
-    console.log("loc",latitude);
+    console.log("Started fetching nearest sellers...");
+
+    const { latitude, longitude, page = 1, limit = 50 } = req.query;
 
     // Ensure latitude and longitude are provided
     if (!latitude || !longitude) {
       return res.status(400).json({ message: "Latitude and longitude are required." });
     }
-console.log("going");
-    // Build the base query for location-based search
+
+    console.log("Received location:", latitude, longitude);
+
+    // Build the query for location-based search
     const query = {
       location: {
         $near: {
@@ -20,27 +22,45 @@ console.log("going");
             type: "Point",
             coordinates: [parseFloat(longitude), parseFloat(latitude)],
           },
+          $minDistance: 0,     // Optional: starts from the exact point
         },
       },
     };
 
-    // Fetch the nearest sellers based on location
+    // Fields to select (improves performance)
+    const projection = {
+      companyName: 1,
+      profileImage: 1,
+      category: 1,
+      place: 1,
+      location: 1,
+      badge: 1,
+      verified: 1,
+    };
+
+    // Fetch the nearest sellers
     const sellers = await Seller.find(query)
-      .skip((page - 1) * 50)  // Skip based on page number and limit
-      .limit(50);
-console.log("sellers",sellers);
+      .select(projection)
+      .skip((page - 1) * limit)  // Pagination
+      .limit(limit);
+
+    console.log(`Found ${sellers.length} sellers.`);
 
     res.status(200).json({
       sellers,
+      pagination: {
+        currentPage: parseInt(page),
+        hasMore: sellers.length === limit,
+      },
     });
   } catch (error) {
+    console.error("Error in getNearestSellers:", error);
     res.status(500).json({
       message: "Error fetching nearest sellers.",
       error: error.message,
     });
   }
 };
-
 // Get nearest sellers by location with category filter
 const getSellersByCategory = async (req, res) => {
   try {
