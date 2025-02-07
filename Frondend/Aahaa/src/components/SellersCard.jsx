@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -14,31 +14,22 @@ const SellerList = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const user = useSelector((state) => state.auth.user);
-  const { nearestSellers, loading, error } = useSelector(
-    (state) => state.listOfSellers
-  );
+  const { loading, error } = useSelector((state) => state.listOfSellers);
 
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [nearSeller, setNearSeller] = useState([]);
   const [favorites, setFavorites] = useState([]);
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
 
-  // Fetch favorites when component mounts
-  useEffect(() => {
-    if (user) {
-      fetchFavorites();
-    }
-  }, [user]);
-
-  // Fetch sellers (existing logic)
-  useEffect(() => {
+  // Memoize the fetchSellers function
+  const fetchSellers = useCallback(async (pageNum) => {
     let latitude, longitude;
 
     if (user?.location?.coordinates?.length === 2) {
       [longitude, latitude] = user.location.coordinates;
     } else {
       const userLoc = localStorage.getItem("userLocation");
-
       if (userLoc) {
         const parsedLocation = JSON.parse(userLoc);
         latitude = parsedLocation.lat;
@@ -49,28 +40,26 @@ const SellerList = () => {
       }
     }
 
-    dispatch(fetchSellersStart());
-
-    axios
-      .get(`${API_URL}/search/nearest-sellers`, {
-        params: { latitude, longitude, page },
-      })
-      .then((response) => {
-        const sellers = response.data.sellers;
-        setNearSeller(sellers);
-        dispatch(fetchSellersSuccess(sellers));
-
-        if (sellers.length < 50) {
-          setHasMore(false);
+    try {
+      const response = await axios.get(`${API_URL}/search/nearest-sellers`, {
+        params: { 
+          latitude, 
+          longitude, 
+          page: pageNum,
+          limit: 20 // Reduced page size for faster initial load
         }
-      })
-      .catch((err) => {
-        dispatch(fetchSellersFailure(err.message));
       });
-  }, [user, page, dispatch]);
+      
+      const sellers = response.data.sellers;
+      return { sellers, hasMore: sellers.length === 20 };
+    } catch (err) {
+      throw new Error(err.message);
+    }
+  }, [API_URL, user]);
 
-  // Fetch favorites
-  const fetchFavorites = async () => {
+  // Fetch favorites in parallel with sellers
+  const fetchFavorites = useCallback(async () => {
+    if (!user) return;
     try {
       const response = await axios.get(`${API_URL}/favorites/all`, {
         params: { userId: user._id }
@@ -79,37 +68,91 @@ const SellerList = () => {
     } catch (error) {
       console.error("Error fetching favorites:", error);
     }
+  }, [API_URL, user]);
+
+  // Initial data loading
+  useEffect(() => {
+    const loadInitialData = async () => {
+      if (!isInitialLoad) return;
+
+      dispatch(fetchSellersStart());
+      try {
+        // Fetch sellers and favorites in parallel
+        const [sellersData] = await Promise.all([
+          fetchSellers(1),
+          fetchFavorites()
+        ]);
+
+        setNearSeller(sellersData.sellers);
+        setHasMore(sellersData.hasMore);
+        dispatch(fetchSellersSuccess(sellersData.sellers));
+        setIsInitialLoad(false);
+      } catch (err) {
+        dispatch(fetchSellersFailure(err.message));
+      }
+    };
+
+    loadInitialData();
+  }, [dispatch, fetchSellers, fetchFavorites, isInitialLoad]);
+
+  // Load more sellers
+  const loadMoreSellers = async () => {
+    if (!hasMore || loading) return;
+
+    const nextPage = page + 1;
+    try {
+      const { sellers, hasMore: moreAvailable } = await fetchSellers(nextPage);
+      setNearSeller(prev => [...prev, ...sellers]);
+      setHasMore(moreAvailable);
+      setPage(nextPage);
+    } catch (error) {
+      console.error("Error loading more sellers:", error);
+    }
   };
 
-  // Toggle favorite
+  // Optimized toggle favorite with local state update
   const toggleFavorite = async (sellerId, e) => {
-    e.stopPropagation(); // Prevent card click event
+    e.stopPropagation();
+    if (!user) return;
+
+    // Optimistic update
+    setFavorites(prev => 
+      prev.includes(sellerId)
+        ? prev.filter(id => id !== sellerId)
+        : [...prev, sellerId]
+    );
+
     try {
       const response = await axios.post(`${API_URL}/favorites/addorremove`, {
         sellerId,
         userId: user._id
       });
 
-      // Update local favorites state
-      if (response.data.success) {
-        setFavorites(response.data.favoriteSellers.map(seller => seller._id));
+      if (!response.data.success) {
+        // Revert on failure
+        setFavorites(prev => 
+          prev.includes(sellerId)
+            ? prev.filter(id => id !== sellerId)
+            : [...prev, sellerId]
+        );
       }
     } catch (error) {
       console.error("Error toggling favorite:", error);
+      // Revert on error
+      setFavorites(prev => 
+        prev.includes(sellerId)
+          ? prev.filter(id => id !== sellerId)
+          : [...prev, sellerId]
+      );
     }
   };
 
-  const handleClick = (seller) => {
+  const handleClick = useCallback((seller) => {
     navigate(`/seller-profile/${seller._id}`, {
       state: { sellerData: seller },
     });
-  };
-
-  const loadMoreSellers = () => {
-    if (hasMore) {
-      setPage((prevPage) => prevPage + 1);
-    }
-  };
+  }, [navigate]);
+ 
 
   if (loading) {
     return (

@@ -35,25 +35,7 @@ const sellerSchema = new mongoose.Schema(
       whatsapp: String,
       email: { type: String, trim: true },
     },
-    posts: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Post', // Seller posts schema (optional)
-      },
-    ],
-    images: [String], // URLs of images (stored in Cloudinary or similar)
-    products: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Product', // Link to Product schema
-      },
-    ],
-    bookings: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Booking',
-      },
-    ],
+  
     reviews: [
       {
         type: mongoose.Schema.Types.ObjectId,
@@ -77,6 +59,9 @@ const sellerSchema = new mongoose.Schema(
   { timestamps: true } // Automatically adds createdAt and updatedAt fields
 );
 
-sellerSchema.index({ location: '2dsphere' }); // For geospatial queries
-
+// Add these to your seller model
+sellerSchema.index({ location: '2dsphere' });
+sellerSchema.index({ badge: 1 });
+sellerSchema.index({ category: 1 });
+sellerSchema.index({ verified: 1 });
 module.exports = mongoose.model('Seller', sellerSchema);
