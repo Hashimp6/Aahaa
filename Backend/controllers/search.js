@@ -1,67 +1,46 @@
 const Seller = require("../models/Seller");
 
 // Get nearest sellers by location
-
 const getNearestSellers = async (req, res) => {
   try {
-    const { latitude, longitude, page = 1, limit = 20 } = req.query;
+    console.log("started");
+    const { latitude, longitude, page = 1 } = req.query;
+    console.log("loc",latitude);
 
+    // Ensure latitude and longitude are provided
     if (!latitude || !longitude) {
-      return res.status(400).json({ 
-        message: "Latitude and longitude are required." 
-      });
+      return res.status(400).json({ message: "Latitude and longitude are required." });
     }
-
+console.log("going");
+    // Build the base query for location-based search
     const query = {
       location: {
         $near: {
           $geometry: {
             type: "Point",
-            coordinates: [parseFloat(longitude), parseFloat(latitude)]
-          }
-          // No maxDistance - will return all sellers sorted by distance
-        }
-      }
+            coordinates: [parseFloat(longitude), parseFloat(latitude)],
+          },
+        },
+      },
     };
 
-    // Only select fields needed for the list view
-    const projection = {
-      companyName: 1,
-      profileImage: 1,
-      category: 1,
-      place: 1,
-      location: 1,
-      badge: 1,
-      verified: 1
-    };
-
-    const [sellers, totalCount] = await Promise.all([
-      Seller.find(query)
-        .select(projection)
-        .skip((page - 1) * limit)
-        .limit(limit)
-        .lean(),
-      Seller.countDocuments(query)
-    ]);
+    // Fetch the nearest sellers based on location
+    const sellers = await Seller.find(query)
+      .skip((page - 1) * 50)  // Skip based on page number and limit
+      .limit(50);
+console.log("sellers",sellers);
 
     res.status(200).json({
       sellers,
-      pagination: {
-        currentPage: parseInt(page),
-        totalPages: Math.ceil(totalCount / limit),
-        hasMore: sellers.length === limit,
-        totalCount
-      }
     });
-
   } catch (error) {
-    console.error('Error in getNearestSellers:', error);
     res.status(500).json({
       message: "Error fetching nearest sellers.",
-      error: error.message
+      error: error.message,
     });
   }
 };
+
 // Get nearest sellers by location with category filter
 const getSellersByCategory = async (req, res) => {
   try {
