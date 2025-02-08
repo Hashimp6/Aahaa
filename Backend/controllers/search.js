@@ -32,6 +32,7 @@ const getNearestSellers = async (req, res) => {
       companyName: 1,
       profileImage: 1,
       category: 1,
+      contact:1,
       place: 1,
       location: 1,
       badge: 1,

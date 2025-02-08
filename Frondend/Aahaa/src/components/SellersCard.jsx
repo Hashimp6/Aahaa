@@ -147,11 +147,12 @@ const SellerList = () => {
     }
   };
 
-  const handleClick = useCallback((seller) => {
+  const handleClick = (seller) => {
+    console.log("seller from ser card",seller);
     navigate(`/seller-profile/${seller._id}`, {
       state: { sellerData: seller },
     });
-  }, [navigate]);
+  };
  
 
   if (loading) {

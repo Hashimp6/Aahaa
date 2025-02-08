@@ -43,10 +43,7 @@ const SellerProfile = () => {
         setStories(response.data);
       } catch (error) {
         console.error("Error fetching stories:", error);
-        showSnackbar(
-          error.response?.data?.message || "Error fetching stories",
-          "error"
-        );
+     
       }
     };
 
