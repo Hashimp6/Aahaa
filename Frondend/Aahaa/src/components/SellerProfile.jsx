@@ -16,7 +16,7 @@ const SellerProfile = () => {
   const API_URL = import.meta.env.VITE_API_BASE_URL;
   const { id } = useParams();
   const location = useLocation();
-  const { sellerData } = location.state || {};
+  const [sellerData, setSellerData] = useState(location.state?.sellerData || null);
   const [posts, setPosts] = useState([]);
   const [stories, setStories] = useState([]);
   const [activeTab, setActiveTab] = useState("posts");
@@ -24,16 +24,23 @@ const SellerProfile = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
+    const fetchSellerData = async () => {
+      try {
+        const response = await axios.get(`${API_URL}/sellers/seller/${id}`);
+        setSellerData(response.data);
+      } catch (error) {
+        console.error("Error fetching seller data:", error);
+        setError(error.response?.data?.message || "Error fetching seller data");
+      }
+    };
+
     const fetchPosts = async () => {
       try {
-        setLoading(true);
         const response = await axios.get(`${API_URL}/post/seller/${id}`);
         setPosts(response.data);
-        setLoading(false);
       } catch (error) {
         console.error("Error fetching posts:", error);
         setError(error.response?.data?.message || "Error fetching posts");
-        setLoading(false);
       }
     };
 
@@ -43,15 +50,23 @@ const SellerProfile = () => {
         setStories(response.data);
       } catch (error) {
         console.error("Error fetching stories:", error);
-     
       }
     };
 
+    const fetchData = async () => {
+      setLoading(true);
+      // If we don't have sellerData from location state, fetch it
+      if (!sellerData) {
+        await fetchSellerData();
+      }
+      await Promise.all([fetchPosts(), fetchStories()]);
+      setLoading(false);
+    };
+
     if (id) {
-      fetchPosts();
-      fetchStories();
+      fetchData();
     }
-  }, [id, API_URL]);
+  }, [id, API_URL, sellerData]);
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error}</p>;
@@ -271,14 +286,7 @@ const MobileSellerProfileLayout = ({ sellerData, posts, stories }) => {
         </div>
         <div className="flex items-center gap-2">
     <ShareProfileButton sellerData={sellerData} />
-    <button
-      className="p-2 bg-gray-100 rounded-full"
-      onClick={() => {
-        /* Edit Profile Action */
-      }}
-    >
-      <Settings className="w-6 h-6 text-[#049b83]" />
-    </button>
+   
   </div>
       </div>
 
