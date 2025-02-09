@@ -12,12 +12,15 @@ import axios from "axios";
 import { Mail, Phone, ShoppingCart } from "lucide-react";
 import ShareProfileButton from "./ShareProfileButton";
 import NavComponent from "./Nav";
+import ImageModal from "./OpenModel";
 
 const SellerProfile = () => {
   const API_URL = import.meta.env.VITE_API_BASE_URL;
   const { id } = useParams();
   const location = useLocation();
-  const [sellerData, setSellerData] = useState(location.state?.sellerData || null);
+  const [sellerData, setSellerData] = useState(
+    location.state?.sellerData || null
+  );
   const [posts, setPosts] = useState([]);
   const [stories, setStories] = useState([]);
   const [products, setProducts] = useState([]);
@@ -69,7 +72,7 @@ const SellerProfile = () => {
       if (!sellerData) {
         await fetchSellerData();
       }
-      await Promise.all([fetchPosts(),fetchProducts(), fetchStories()]);
+      await Promise.all([fetchPosts(), fetchProducts(), fetchStories()]);
       setLoading(false);
     };
 
@@ -84,7 +87,7 @@ const SellerProfile = () => {
 
   return (
     <div className=" bg-gray-100">
-      <NavComponent/>
+      <NavComponent />
       {/* Mobile Layout */}
       <div className="md:hidden">
         <MobileSellerProfileLayout
@@ -96,7 +99,7 @@ const SellerProfile = () => {
       </div>
 
       {/* Desktop Layout */}
-      <div className="hidden md:flex w-screen  overflow-hidden">
+      <div className="hidden md:flex max-w-full">
         {/* Left Side - Profile Section */}
         <div className="w-1/4 border-r border-gray-300 bg-white  ">
           <div className="flex flex-col bg-white shadow-lg rounded-xl  h-full">
@@ -175,7 +178,7 @@ const SellerProfile = () => {
         </div>
 
         {/* Right Side - Scrollable Section */}
-        <div className="w-3/4 p-4 overflow-y-auto bg-white">
+        <div className="w-3/4 p-1 overflow-y-auto bg-white">
           {/* Stories Section */}
           <StoriesSection stories={stories} />
 
@@ -205,27 +208,45 @@ const renderContactLink = (href, icon, text, bgClass) => (
   </a>
 );
 
-const StoriesSection = ({ stories }) => (
-  <div className="overflow-x-auto pl-2 scrollbar-hide">
-    <div className="flex space-x-4 py-4">
-      {stories.map((story) => (
-        <div key={story.id} className="flex-shrink-0">
-          <div className="w-32 h-32 rounded-lg overflow-hidden ring-2 ring-[#049b83] p-0.5 bg-white relative">
-            <img
-              src={story.media}
-              alt={story.title}
-              className="w-full h-full object-cover rounded-lg"
-            />
-            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-2">
-              <p className="text-white text-sm truncate">{story.description}</p>
-            </div>
-          </div>
-        </div>
-      ))}
-    </div>
-  </div>
-);
+const StoriesSection = ({ stories }) => {
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
+  return (
+    <>
+      <div className="overflow-x-auto pl-2 scrollbar-hide">
+        <div className="flex space-x-4 py-4">
+          {stories.map((story) => (
+            <div 
+              key={story.id} 
+              className="flex-shrink-0 cursor-pointer"
+              onClick={() => {
+                setSelectedImage(story.media);
+                setIsModalOpen(true);
+              }}
+            >
+              <div className="w-32 h-32 rounded-lg overflow-hidden ring-2 ring-[#049b83] p-0.5 bg-white relative">
+                <img
+                  src={story.media}
+                  alt={story.title}
+                  className="w-full h-full object-cover rounded-lg"
+                />
+                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-2">
+                  <p className="text-white text-sm truncate">{story.description}</p>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+      <ImageModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        imageUrl={selectedImage}
+      />
+    </>
+  );
+};
 const TabSection = ({ activeTab, setActiveTab }) => (
   <div className="flex space-x-4 border-b mb-6">
     {["posts", "products"].map((tab) => (
@@ -245,41 +266,115 @@ const TabSection = ({ activeTab, setActiveTab }) => (
 );
 
 const ContentSection = ({ activeTab, posts, products }) => {
-  const renderGrid = (items, type) => (
-    <div
-      className={`grid ${
-        type === "posts" ? "grid-cols-5" : "grid-cols-2"
-      } gap-4`}
-    >
-      {items.length > 0 ? (
-        items.map((item, index) => (
-          <div key={index} className="bg-white p-4 rounded-lg shadow-md">
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const renderPosts = () => (
+    <div className="grid grid-cols-4  gap-4">
+      {posts.length > 0 ? (
+        posts.map((item, index) => (
+          <div
+            key={index}
+            className="bg-white  rounded-lg shadow-md cursor-pointer"
+            onClick={() => {
+              setSelectedImage(item.media);
+              setIsModalOpen(true);
+            }}
+          >
             <img
-              src={type === "posts" ? item.media : item.image}
-              alt={type === "posts" ? "Post" : item.name}
+              src={item.media}
+              alt="Post"
               className="w-full h-40 object-cover rounded-lg"
             />
-            <p className="mt-2 text-sm text-gray-600">
-              {type === "posts" ? item.description : item.description}
-            </p>
+            <p className="mt-2 p-2 text-sm text-gray-600">{item.description}</p>
           </div>
         ))
       ) : (
-        <p>No {type} available.</p>
+        <p>No posts available.</p>
+      )}
+    </div>
+  );
+
+  const renderProducts = () => (
+    <div className="grid grid-cols-4 gap-4">
+      {products && products.length > 0 ? (
+        products.map((product) => (
+          <div
+            key={product._id}
+            className="bg-white rounded-lg shadow-md overflow-hidden"
+          >
+            <div
+              className="relative cursor-pointer"
+              onClick={() => {
+                setSelectedImage(product.productImage);
+                setIsModalOpen(true);
+              }}
+            >
+              <img
+                src={product.productImage}
+                alt={product.productName}
+                className="w-full h-48 object-cover"
+              />
+              {product.quantity === 0 && (
+                <div className="absolute top-2 left-2 bg-red-500 text-white px-2 py-1 rounded-md text-xs">
+                  Out of Stock
+                </div>
+              )}
+            </div>
+            <div className="p-2">
+              <h3 className="font-medium text-lg">{product.productName}</h3>
+              <div className="flex items-center justify-between mb-1">
+                <span className="font-bold text-lg">₹{product.price}</span>
+                
+              </div>
+              <button
+                className={`w-full py-2 px-4 rounded-md flex items-center justify-center space-x-2 ${
+                  product.quantity > 0
+                    ? "bg-[#049b83] text-white hover:bg-[#038671]"
+                    : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                }`}
+                disabled={product.quantity === 0}
+              >
+                <ShoppingCart className="w-4 h-4" />
+                <span>
+                  {product.quantity > 0 ? "Have an enquiry" : "Out of Stock"}
+                </span>
+              </button>
+            </div>
+          </div>
+        ))
+      ) : (
+        <p className="col-span-4 text-center text-gray-500">
+          No products available
+        </p>
       )}
     </div>
   );
 
   return (
     <div>
-      {activeTab === "posts" && renderGrid(posts, "posts")}
-      {activeTab === "products" && renderGrid(products, "products")}
+      {activeTab === "posts" && renderPosts()}
+      {activeTab === "products" && renderProducts()}
+      <ImageModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        imageUrl={selectedImage}
+      />
     </div>
   );
 };
 
-const MobileSellerProfileLayout = ({ sellerData, posts, stories,products }) => {
+// ... (keep the rest of the component code the same)
+
+const MobileSellerProfileLayout = ({
+  sellerData,
+  posts,
+  stories,
+  products,
+}) => {
   const [activeTab, setActiveTab] = useState("posts");
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
     <div className="bg-white">
@@ -297,9 +392,8 @@ const MobileSellerProfileLayout = ({ sellerData, posts, stories,products }) => {
           </div>
         </div>
         <div className="flex items-center gap-2">
-    <ShareProfileButton sellerData={sellerData} />
-   
-  </div>
+          <ShareProfileButton sellerData={sellerData} />
+        </div>
       </div>
 
       {/* Social Media Links */}
@@ -336,92 +430,101 @@ const MobileSellerProfileLayout = ({ sellerData, posts, stories,products }) => {
 
       {/* Content Section */}
       {/* Content Section */}
-<div className="p-4">
-  {activeTab === "posts" && (
-   <div className="grid grid-cols-3 gap-2">
-   {Array.isArray(posts) && posts.length > 0 ? (
-     posts.map((post) => (
-       <div key={post._id} className="relative group">
-         {/* Base Image */}
-         <img
-           src={post.media}
-           alt="Post"
-           className="w-full aspect-square object-cover"
-         />
-         
-         {/* Hover Overlay */}
-         <div className="opacity-0 group-hover:opacity-100 fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50 transition-opacity duration-200">
-           <div className="bg-white rounded-lg shadow-xl p-4 max-w-sm">
-             <img
-               src={post.media}
-               alt="Post"
-               className="w-full h-64 object-cover rounded-lg"
-             />
-             <p className="mt-3 text-sm text-gray-700">{post.description}</p>
-           </div>
-         </div>
-         
-         {/* Dark Background Overlay */}
-         <div className="fixed inset-0 bg-black/50 opacity-0 group-hover:opacity-100 z-40 transition-opacity duration-200"></div>
-       </div>
-     ))
-   ) : (
-     <p className="col-span-3 text-center text-gray-500">No posts available</p>
-   )}
- </div>
-  )}
-
-  {activeTab === "products" && (
-    <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-4">
-      {products && Array.isArray(products) && products.length > 0 ? (
-        products.map((product) => (
-          <div
-            key={product._id}
-            className="bg-white rounded-lg shadow-md overflow-hidden"
-          >
-            <div className="relative">
-              <img
-                src={product.productImage}
-                alt={product.productName}
-                className="w-full h-48 object-cover"
-              />
-              {product.quantity === 0 && (
-                <div className="absolute top-2 left-2 bg-red-500 text-white px-2 py-1 rounded-md text-xs">
-                  Out of Stock
+      <div className="p-4">
+        {activeTab === "posts" && (
+          <div className="grid grid-cols-3 gap-2">
+            {Array.isArray(posts) && posts.length > 0 ? (
+              posts.map((post) => (
+                <div
+                  key={post._id}
+                  onClick={() => {
+                    setSelectedImage(post.media);
+                    setIsModalOpen(true);
+                  }}
+                  className="cursor-pointer"
+                >
+                  <img
+                    src={post.media}
+                    alt="Post"
+                    className="w-full aspect-square object-cover"
+                  />
                 </div>
-              )}
-             
-            </div>
-            <div className="p-2">
-              <h3 className="font-medium text-lg">{product.productName}</h3>
-              <div className="flex items-center justify-between mb-1">
-                <span className="font-bold text-lg">₹{product.price}</span>
-                <span className="text-sm text-gray-500">
-                  Stock: {product.quantity}
-                </span>
-              </div>
-              <button
-                className={`w-full py-2 px-4 rounded-md flex items-center justify-center space-x-2 ${
-                  product.quantity > 0
-                    ? "bg-[#049b83] text-white hover:bg-[#038671]"
-                    : "bg-gray-300 text-gray-500 cursor-not-allowed"
-                }`}
-                disabled={product.quantity === 0}
-              >
-                <ShoppingCart className="w-4 h-4" />
-                <span>
-                  {product.quantity > 0 ? "Add to Cart" : "Out of Stock"}
-                </span>
-              </button>
-            </div>
+              ))
+            ) : (
+              <p className="col-span-3 text-center text-gray-500">
+                No posts available
+              </p>
+            )}
           </div>
-        ))
-      ) : (
-        <p className="col-span-2 text-center text-gray-500">No products available</p>
-      )}
-    </div>
-  )}
-</div>
+        )}
+
+        {activeTab === "products" && (
+          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-4">
+            {products && Array.isArray(products) && products.length > 0 ? (
+              products.map((product) => (
+                <div
+                  key={product._id}
+                  className="bg-white rounded-lg shadow-md overflow-hidden"
+                >
+                  <div
+                    className="relative cursor-pointer"
+                    onClick={() => {
+                      setSelectedImage(product.productImage);
+                      setIsModalOpen(true);
+                    }}
+                  >
+                    <img
+                      src={product.productImage}
+                      alt={product.productName}
+                      className="w-full h-48 object-cover"
+                    />
+                    {product.quantity === 0 && (
+                      <div className="absolute top-2 left-2 bg-red-500 text-white px-2 py-1 rounded-md text-xs">
+                        Out of Stock
+                      </div>
+                    )}
+                  </div>
+                  <div className="p-2">
+                    <h3 className="font-medium text-lg">
+                      {product.productName}
+                    </h3>
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="font-bold text-lg">
+                        ₹{product.price}
+                      </span>
+                      <span className="text-sm text-gray-500">
+                        Stock: {product.quantity}
+                      </span>
+                    </div>
+                    <button
+                      className={`w-full py-2 px-4 rounded-md flex items-center justify-center space-x-2 ${
+                        product.quantity > 0
+                          ? "bg-[#049b83] text-white hover:bg-[#038671]"
+                          : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                      }`}
+                      disabled={product.quantity === 0}
+                    >
+                      <ShoppingCart className="w-4 h-4" />
+                      <span>
+                        {product.quantity > 0 ? "Add to Cart" : "Out of Stock"}
+                      </span>
+                    </button>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <p className="col-span-2 text-center text-gray-500">
+                No products available
+              </p>
+            )}
+          </div>
+        )}
+        <ImageModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          imageUrl={selectedImage}
+        />
+      </div>
     </div>
   );
 };
