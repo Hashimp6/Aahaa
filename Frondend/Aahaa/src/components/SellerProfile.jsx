@@ -11,6 +11,7 @@ import { useSelector } from "react-redux";
 import axios from "axios";
 import { Mail, Phone } from "lucide-react";
 import ShareProfileButton from "./ShareProfileButton";
+import NavComponent from "./Nav";
 
 const SellerProfile = () => {
   const API_URL = import.meta.env.VITE_API_BASE_URL;
@@ -74,6 +75,7 @@ const SellerProfile = () => {
 
   return (
     <div className=" bg-gray-100">
+      <NavComponent/>
       {/* Mobile Layout */}
       <div className="md:hidden">
         <MobileSellerProfileLayout
