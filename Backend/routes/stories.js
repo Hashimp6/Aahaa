@@ -11,6 +11,6 @@ storiesRouter.post('/create', upload.single('media'), createStories);
 storiesRouter.get("/seller/:sellerId", getStoriesByUser);
 
 // DELETE route to delete a post by its ID
-storiesRouter.delete("/:postId", deleteStories);
+storiesRouter.delete("/:storyId", deleteStories);
 
 module.exports = storiesRouter;
