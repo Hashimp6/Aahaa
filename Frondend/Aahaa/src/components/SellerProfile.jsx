@@ -338,20 +338,37 @@ const MobileSellerProfileLayout = ({ sellerData, posts, stories,products }) => {
       {/* Content Section */}
 <div className="p-4">
   {activeTab === "posts" && (
-    <div className="grid grid-cols-3 gap-2">
-      {Array.isArray(posts) && posts.length > 0 ? (
-        posts.map((post) => (
-          <img
-            key={post._id}
-            src={post.media}
-            alt="Post"
-            className="w-full aspect-square object-cover"
-          />
-        ))
-      ) : (
-        <p className="col-span-3 text-center text-gray-500">No posts available</p>
-      )}
-    </div>
+   <div className="grid grid-cols-3 gap-2">
+   {Array.isArray(posts) && posts.length > 0 ? (
+     posts.map((post) => (
+       <div key={post._id} className="relative group">
+         {/* Base Image */}
+         <img
+           src={post.media}
+           alt="Post"
+           className="w-full aspect-square object-cover"
+         />
+         
+         {/* Hover Overlay */}
+         <div className="opacity-0 group-hover:opacity-100 fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50 transition-opacity duration-200">
+           <div className="bg-white rounded-lg shadow-xl p-4 max-w-sm">
+             <img
+               src={post.media}
+               alt="Post"
+               className="w-full h-64 object-cover rounded-lg"
+             />
+             <p className="mt-3 text-sm text-gray-700">{post.description}</p>
+           </div>
+         </div>
+         
+         {/* Dark Background Overlay */}
+         <div className="fixed inset-0 bg-black/50 opacity-0 group-hover:opacity-100 z-40 transition-opacity duration-200"></div>
+       </div>
+     ))
+   ) : (
+     <p className="col-span-3 text-center text-gray-500">No posts available</p>
+   )}
+ </div>
   )}
 
   {activeTab === "products" && (
