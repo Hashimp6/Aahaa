@@ -115,7 +115,7 @@ const CreateStory = ({ onSuccess, onClose, showSnackbar }) => {
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 placeholder="Write your story description..."
-                className="w-full min-h-[120px] p-3 rounded-lg border border-gray-200 focus:border-[#038671] focus:ring-1 focus:ring-[#038671] outline-none resize-none"
+                className="w-full min-h-[80px] p-3 rounded-lg border border-gray-200 focus:border-[#038671] focus:ring-1 focus:ring-[#038671] outline-none resize-none"
               />
 
               {error && (

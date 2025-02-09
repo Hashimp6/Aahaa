@@ -20,6 +20,7 @@ const SellerProfile = () => {
   const [sellerData, setSellerData] = useState(location.state?.sellerData || null);
   const [posts, setPosts] = useState([]);
   const [stories, setStories] = useState([]);
+  const [products, setProducts] = useState([]);
   const [activeTab, setActiveTab] = useState("posts");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -44,7 +45,15 @@ const SellerProfile = () => {
         setError(error.response?.data?.message || "Error fetching posts");
       }
     };
-
+    const fetchProducts = async () => {
+      try {
+        const response = await axios.get(`${API_URL}/product/seller/${id}`);
+        setProducts(response.data);
+      } catch (error) {
+        console.error("Error fetching products:", error);
+        setError(error.response?.data?.message || "Error fetching posts");
+      }
+    };
     const fetchStories = async () => {
       try {
         const response = await axios.get(`${API_URL}/stories/seller/${id}`);
@@ -60,7 +69,7 @@ const SellerProfile = () => {
       if (!sellerData) {
         await fetchSellerData();
       }
-      await Promise.all([fetchPosts(), fetchStories()]);
+      await Promise.all([fetchPosts(),fetchProducts(), fetchStories()]);
       setLoading(false);
     };
 
@@ -82,6 +91,7 @@ const SellerProfile = () => {
           sellerData={sellerData}
           posts={posts}
           stories={stories}
+          products={products}
         />
       </div>
 
@@ -176,7 +186,7 @@ const SellerProfile = () => {
           <ContentSection
             activeTab={activeTab}
             posts={posts}
-            products={sellerData.products}
+            products={products}
           />
         </div>
       </div>
@@ -268,7 +278,7 @@ const ContentSection = ({ activeTab, posts, products }) => {
   );
 };
 
-const MobileSellerProfileLayout = ({ sellerData, posts, stories }) => {
+const MobileSellerProfileLayout = ({ sellerData, posts, stories,products }) => {
   const [activeTab, setActiveTab] = useState("posts");
 
   return (
@@ -325,38 +335,47 @@ const MobileSellerProfileLayout = ({ sellerData, posts, stories }) => {
       <TabSection activeTab={activeTab} setActiveTab={setActiveTab} />
 
       {/* Content Section */}
-      <div className="p-4">
-        {activeTab === "posts" && (
-          <div className="grid grid-cols-3 gap-2">
-            {posts.map((post) => (
-              <img
-                key={post._id}
-                src={post.media}
-                alt="Post"
-                className="w-full aspect-square object-cover"
-              />
-            ))}
-          </div>
-        )}
+      {/* Content Section */}
+<div className="p-4">
+  {activeTab === "posts" && (
+    <div className="grid grid-cols-3 gap-2">
+      {Array.isArray(posts) && posts.length > 0 ? (
+        posts.map((post) => (
+          <img
+            key={post._id}
+            src={post.media}
+            alt="Post"
+            className="w-full aspect-square object-cover"
+          />
+        ))
+      ) : (
+        <p className="col-span-3 text-center text-gray-500">No posts available</p>
+      )}
+    </div>
+  )}
 
-        {activeTab === "products" && (
-          <div className="grid grid-cols-2 gap-4">
-            {sellerData.products.map((product) => (
-              <div key={product._id} className="bg-white rounded-lg shadow-md">
-                <img
-                  src={product.image}
-                  alt={product.name}
-                  className="w-full h-40 object-cover rounded-t-lg"
-                />
-                <div className="p-2">
-                  <h3 className="font-semibold">{product.name}</h3>
-                  <p className="text-sm text-gray-600">{product.description}</p>
-                </div>
-              </div>
-            ))}
+  {activeTab === "products" && (
+    <div className="grid grid-cols-2 gap-4">
+      {products && Array.isArray(products) && products.length > 0 ? (
+        products.map((product) => (
+          <div key={product._id} className="bg-white rounded-lg shadow-md">
+            <img
+              src={product.productImage}
+              alt={product.name}
+              className="w-full h-40 object-cover rounded-t-lg"
+            />
+            <div className="p-2">
+              <h3 className="font-semibold">{product.name}</h3>
+              <p className="text-sm text-gray-600">{product.description}</p>
+            </div>
           </div>
-        )}
-      </div>
+        ))
+      ) : (
+        <p className="col-span-2 text-center text-gray-500">No products available</p>
+      )}
+    </div>
+  )}
+</div>
     </div>
   );
 };

@@ -124,6 +124,7 @@ const RightSideComponent = ({ isMobile = false }) => {
     ]);
     handleStoryModalClose();
     showSnackbar("Story created successfully!");
+    fetchStories();
   };
 
   const handleDeleteStory = async (storyId) => {

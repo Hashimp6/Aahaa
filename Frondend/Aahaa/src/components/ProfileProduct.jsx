@@ -26,7 +26,7 @@ const Modal = ({ isOpen, onClose, children }) => {
 };
 
 const ProductsGrid = () => {
-    const API_URL = import.meta.env.VITE_API_BASE_URL;
+  const API_URL = import.meta.env.VITE_API_BASE_URL;
   const [products, setProducts] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -104,7 +104,9 @@ const ProductsGrid = () => {
           className="bg-white p-4 rounded-lg shadow-md border-2 border-dashed border-[#049b83] flex flex-col items-center justify-center cursor-pointer hover:border-[#038671] transition-colors min-h-[300px]"
         >
           <PlusCircle className="w-12 h-12 text-[#049b83] mb-3" />
-          <p className="text-[#049b83] font-medium">Add New Product</p>
+          <p className="text-[#049b83] font-medium text-center">
+            Add New Product
+          </p>
           <p className="text-sm text-gray-500 mt-2 text-center">
             List your products for sale
           </p>

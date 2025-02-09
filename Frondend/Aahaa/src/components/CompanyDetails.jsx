@@ -44,6 +44,7 @@ const SellerForm = () => {
     "Resin",
     "Tailoring",
     "Sweets",
+    "Restaurant"
   ];
   const [formData, setFormData] = useState({
     companyName: "",
