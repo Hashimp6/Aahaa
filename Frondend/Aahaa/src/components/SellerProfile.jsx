@@ -9,7 +9,7 @@ import {
 import { useLocation, useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import axios from "axios";
-import { Mail, Phone } from "lucide-react";
+import { Mail, Phone, ShoppingCart } from "lucide-react";
 import ShareProfileButton from "./ShareProfileButton";
 import NavComponent from "./Nav";
 
@@ -284,7 +284,7 @@ const MobileSellerProfileLayout = ({ sellerData, posts, stories,products }) => {
   return (
     <div className="bg-white">
       {/* Mobile Profile Header */}
-      <div className="flex items-center justify-between p-4">
+      <div className="flex items-centerit justify-between p-4">
         <div className="flex items-center space-x-4">
           <img
             src={sellerData.profileImage}
@@ -355,18 +355,47 @@ const MobileSellerProfileLayout = ({ sellerData, posts, stories,products }) => {
   )}
 
   {activeTab === "products" && (
-    <div className="grid grid-cols-2 gap-4">
+    <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-4">
       {products && Array.isArray(products) && products.length > 0 ? (
         products.map((product) => (
-          <div key={product._id} className="bg-white rounded-lg shadow-md">
-            <img
-              src={product.productImage}
-              alt={product.name}
-              className="w-full h-40 object-cover rounded-t-lg"
-            />
+          <div
+            key={product._id}
+            className="bg-white rounded-lg shadow-md overflow-hidden"
+          >
+            <div className="relative">
+              <img
+                src={product.productImage}
+                alt={product.productName}
+                className="w-full h-48 object-cover"
+              />
+              {product.quantity === 0 && (
+                <div className="absolute top-2 left-2 bg-red-500 text-white px-2 py-1 rounded-md text-xs">
+                  Out of Stock
+                </div>
+              )}
+             
+            </div>
             <div className="p-2">
-              <h3 className="font-semibold">{product.name}</h3>
-              <p className="text-sm text-gray-600">{product.description}</p>
+              <h3 className="font-medium text-lg">{product.productName}</h3>
+              <div className="flex items-center justify-between mb-1">
+                <span className="font-bold text-lg">₹{product.price}</span>
+                <span className="text-sm text-gray-500">
+                  Stock: {product.quantity}
+                </span>
+              </div>
+              <button
+                className={`w-full py-2 px-4 rounded-md flex items-center justify-center space-x-2 ${
+                  product.quantity > 0
+                    ? "bg-[#049b83] text-white hover:bg-[#038671]"
+                    : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                }`}
+                disabled={product.quantity === 0}
+              >
+                <ShoppingCart className="w-4 h-4" />
+                <span>
+                  {product.quantity > 0 ? "Add to Cart" : "Out of Stock"}
+                </span>
+              </button>
             </div>
           </div>
         ))

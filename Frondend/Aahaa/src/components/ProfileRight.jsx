@@ -133,7 +133,9 @@ const RightSideComponent = ({ isMobile = false }) => {
       setStories((prevStories) =>
         prevStories.filter((story) => story.id !== storyId)
       );
+      fetchStories();
       showSnackbar("Story deleted successfully!");
+      
     } catch (error) {
       console.error("Error deleting story:", error);
       showSnackbar(

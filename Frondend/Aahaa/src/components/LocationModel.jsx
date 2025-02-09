@@ -358,7 +358,7 @@ const LocationSelector = ({ onClose }) => {
       </div>
 
       {/* Confirm Button */}
-      <div className="px-6 py-4 bg-gray-50 border-t">
+      <div className="px-6 py-4 bg-gray-50 mb-16 border-t">
         <button
           onClick={handleConfirmLocation}
           className={`w-full flex items-center justify-center px-4 py-2 text-white rounded-lg ${

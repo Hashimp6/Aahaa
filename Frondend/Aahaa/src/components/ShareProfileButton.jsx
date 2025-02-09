@@ -6,7 +6,7 @@ const ShareProfileButton = ({ sellerData }) => {
   const [showTooltip, setShowTooltip] = useState(false);
   
   // Get the current URL
-  const currentUrl = window.location.href;
+  const currentUrl = `https://www.ebycedy.com/seller-profile/${sellerData._id}`;
   
   // Create share data
   const shareData = {

@@ -8,9 +8,10 @@ const ProfileDrawer = ({ isOpen, onClose }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const user = useSelector((state) => state.auth.user);
+  const sellerData = useSelector((state) => state.seller.sellerData);
 
   // Get the seller details from user object
-  const hasSellerDetails = user?.sellerDetails;
+  const hasSellerDetails = sellerData
 
   const handleLogout = (e) => {
     e.preventDefault();

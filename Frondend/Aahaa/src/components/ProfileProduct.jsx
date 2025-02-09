@@ -121,7 +121,7 @@ const ProductsGrid = () => {
             <div className="relative">
               <img
                 src={product.productImage}
-                alt={product.productName}
+                alt={"hi"}
                 className="w-full h-48 object-cover"
               />
               {product.quantity === 0 && (
