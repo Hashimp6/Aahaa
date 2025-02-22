@@ -9,7 +9,7 @@ let registrationStorage = {};
 let otpStorage = {};
 
 // Initial registration step
-const initiateRegistration = async (req, res) => {
+const   initiateRegistration = async (req, res) => {
   try {
     const { name, email, password } = req.body;
 
@@ -106,7 +106,7 @@ const verifyOTPAndRegister = async (req, res) => {
       message: "Registration completed successfully.",
       token,
       user: {
-        id: newUser._id,
+        _id: newUser._id,
         name: newUser.name,
         email: newUser.email,
         isVerified: newUser.isVerified

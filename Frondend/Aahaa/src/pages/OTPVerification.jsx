@@ -43,7 +43,7 @@ function OtpVerificationPage() {
         // Store authentication data
         localStorage.setItem("token", response.data.token);
         localStorage.setItem("user", JSON.stringify(response.data.user));
-
+  console.log("user and token is ",response.data.user,response.data.token);
         // Update Redux state
         dispatch(
           login({
