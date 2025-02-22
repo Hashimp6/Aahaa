@@ -1,38 +1,155 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const User = require("../models/User"); // Adjust the path to your User model
+const crypto = require("crypto");
+const User = require("../models/User");
+const sendMail = require("../configs/nodeMailer");
 
-// Register a new user with basic details
-const register = async (req, res) => {
+// Temporary storage for registration data and OTPs
+let registrationStorage = {};
+let otpStorage = {};
+
+// Initial registration step
+const initiateRegistration = async (req, res) => {
   try {
     const { name, email, password } = req.body;
-    console.log("login details from frond end", req.body);
 
     // Check for missing fields
     if (!name || !email || !password) {
-      return res
-        .status(400)
-        .json({ message: "Name, email, and password are required." });
+      return res.status(400).json({ 
+        message: "Name, email, and password are required." 
+      });
     }
 
-    // Check if the user already exists
+    // Check if user already exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      return res.status(400).json({ message: "Email is already registered." });
+      return res.status(400).json({ 
+        message: "Email is already registered." 
+      });
     }
 
     // Hash the password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Create a new user
-    const newUser = new User({ name, email, password: hashedPassword });
-    await newUser.save();
+    // Store registration data temporarily
+    registrationStorage[email] = {
+      name,
+      email,
+      password: hashedPassword,
+      timestamp: Date.now()
+    };
 
-    res.status(201).json({ message: "User registered successfully." });
+    // Generate and send OTP
+    const otp = crypto.randomInt(100000, 999999).toString();
+    otpStorage[email] = {
+      otp,
+      timestamp: Date.now()
+    };
+
+    // Send OTP email
+    await sendMail(email, otp);
+
+    res.status(200).json({ 
+      message: "OTP sent successfully. Please verify to complete registration." 
+    });
+
   } catch (error) {
     res.status(500).json({
       message: "Server error. Please try again later.",
-      error: error.message,
+      error: error.message
+    });
+  }
+};
+
+// Verify OTP and complete registration
+const verifyOTPAndRegister = async (req, res) => {
+  try {
+    const { email, otp } = req.body;
+
+    // Check if OTP exists and is valid
+    if (!otpStorage[email] || !registrationStorage[email]) {
+      return res.status(400).json({ 
+        message: "OTP expired or registration timeout. Please try again." 
+      });
+    }
+
+    // Verify OTP
+    if (otpStorage[email].otp !== otp) {
+      return res.status(400).json({ 
+        message: "Invalid OTP." 
+      });
+    }
+
+    // Get stored registration data
+    const userData = registrationStorage[email];
+
+    // Create new user in database
+    const newUser = new User({
+      name: userData.name,
+      email: userData.email,
+      password: userData.password,
+      isVerified: true
+    });
+
+    await newUser.save();
+
+    // Generate JWT
+    const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET, {
+      expiresIn: "1h"
+    });
+
+    // Clean up storage
+    delete otpStorage[email];
+    delete registrationStorage[email];
+
+    res.status(201).json({
+      message: "Registration completed successfully.",
+      token,
+      user: {
+        id: newUser._id,
+        name: newUser.name,
+        email: newUser.email,
+        isVerified: newUser.isVerified
+      }
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      message: "Server error. Please try again later.",
+      error: error.message
+    });
+  }
+};
+
+// Resend OTP
+const resendOTP = async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    if (!registrationStorage[email]) {
+      return res.status(400).json({ 
+        message: "Registration session expired. Please start registration again." 
+      });
+    }
+
+    // Generate new OTP
+    const otp = crypto.randomInt(100000, 999999).toString();
+    otpStorage[email] = {
+      otp,
+      timestamp: Date.now()
+    };
+
+    // Send new OTP
+    await sendMail(email, otp);
+
+    res.status(200).json({ 
+      message: "OTP resent successfully." 
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      message: "Server error. Please try again later.",
+      error: error.message
     });
   }
 };
@@ -177,7 +294,9 @@ const verifyToken= async (req, res) => {
 
 
 module.exports = {
-  register,
+  initiateRegistration,
+  verifyOTPAndRegister,
+  resendOTP,
   login,
   getAllUsers,
   updateUserDetails,

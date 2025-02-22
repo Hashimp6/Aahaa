@@ -1,25 +1,19 @@
 import React, { useState } from "react";
 import { TextField, Button, CircularProgress } from "@mui/material";
-import { useNavigate } from "react-router-dom"; // For navigation to Login page
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 function RegistrationPage() {
   const API_URL = import.meta.env.VITE_API_BASE_URL;
-  // State for form fields
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     password: "",
   });
-
-  // State for error handling
   const [error, setError] = useState(null);
-
-  // Initialize navigate function from react-router-dom
   const navigate = useNavigate();
 
-  // Handle input changes
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
@@ -28,27 +22,21 @@ function RegistrationPage() {
     }));
   };
 
-  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     try {
-      // First register the user
-      const registerResponse = await axios.post(`${API_URL}/auth/register`, formData);
+      // Now we only need one API call to initiate registration
+      const response = await axios.post(
+        `${API_URL}/auth/initiate-registration`, 
+        formData
+      );
 
-      if (registerResponse.status === 201) {
-        // After successful registration, send OTP
-        const otpResponse = await axios.post(`${API_URL}/otp/send-otp`, {
-          email: formData.email
-        });
-
-        if (otpResponse.status === 200) {
-          console.log("Registration and OTP sending successful");
-          // Store email in sessionStorage for OTP verification page
-          sessionStorage.setItem('verificationEmail', formData.email);
-          setLoading(false);
-          navigate("/otp-verification");
-        }
+      if (response.status === 200) {
+        // Store email for OTP verification
+        sessionStorage.setItem('verificationEmail', formData.email);
+        setLoading(false);
+        navigate("/otp-verification");
       }
     } catch (err) {
       setError(

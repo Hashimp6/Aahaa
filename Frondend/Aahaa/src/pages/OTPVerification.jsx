@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { TextField, Button, CircularProgress } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { login } from "../redux/slices/authSlice";
 import axios from "axios";
 
 function OtpVerificationPage() {
   const API_URL = import.meta.env.VITE_API_BASE_URL;
+  const dispatch = useDispatch();
   const [otp, setOtp] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -28,16 +31,30 @@ function OtpVerificationPage() {
     e.preventDefault();
     setLoading(true);
     try {
-      const response = await axios.post(`${API_URL}/otp/verify-otp`, { 
+      // Use the new combined verification endpoint
+      const response = await axios.post(`${API_URL}/auth/verify-otp-register`, {
         email,
-        otp 
+        otp
       });
 
-      if (response.status === 200) {
-        console.log("OTP Verified:", response.data);
+      if (response.status === 201) { // Note: Changed to 201 for successful registration
+        console.log("Registration Completed:", response.data);
+
+        // Store authentication data
+        localStorage.setItem("token", response.data.token);
+        localStorage.setItem("user", JSON.stringify(response.data.user));
+
+        // Update Redux state
+        dispatch(
+          login({
+            user: response.data.user,
+            token: response.data.token,
+          })
+        );
+
         sessionStorage.removeItem('verificationEmail'); // Clean up
         setLoading(false);
-        navigate("/login");
+        navigate("/home");
       }
     } catch (err) {
       setError(err.response?.data?.message || "Invalid OTP. Try again.");
@@ -47,7 +64,7 @@ function OtpVerificationPage() {
 
   const handleResendOtp = async () => {
     try {
-      const response = await axios.post(`${API_URL}/otp/resend-otp`, { email });
+      const response = await axios.post(`${API_URL}/auth/resend-otp`, { email });
       if (response.status === 200) {
         setError("New OTP sent successfully!");
       }
