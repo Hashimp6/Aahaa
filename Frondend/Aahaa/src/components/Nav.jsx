@@ -50,7 +50,7 @@ SidebarComponent px-3 md:px-4 py-2 md:py-3 text-white"
             <div className="text-lg md:text-xl font-bold">
               <a href="/" className="transition-colors">
                 <img
-                  src="/icon3.ico" // Update this path
+                  src="/newLogo1.ico" // Update this path
                   alt="My Logo"
                   className="h-12 md:h-14 rounded-xl shadow-lg border border-gray-300  bg-white"
                 />
